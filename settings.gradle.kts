@@ -9,3 +9,4 @@ pluginManagement {
 rootProject.name = "FinancialTracker"
 include(":androidApp")
 include(":shared")
+include(":backend")
