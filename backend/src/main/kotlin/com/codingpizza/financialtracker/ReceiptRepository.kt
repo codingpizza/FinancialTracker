@@ -21,4 +21,8 @@ object ReceiptRepository {
 
     fun findById(id: Long): Receipt? = runBlocking { collection.findOne(Receipt::id eq id) }
 
+    fun removeById(id: Long): Receipt? = runBlocking {
+        collection.findOneAndDelete(Receipt::id eq id)
+    }
+
 }

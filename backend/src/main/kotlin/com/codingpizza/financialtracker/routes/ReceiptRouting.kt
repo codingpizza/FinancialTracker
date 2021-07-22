@@ -10,8 +10,8 @@ import io.ktor.request.*
 import kotlinx.coroutines.runBlocking
 
 fun Route.receiptRouting() {
-    val receiptStorage = mutableListOf<Receipt>()
     route("/receipt") {
+
         get {
             val receipts = ReceiptRepository.retrieveReceipts()
             if (receipts.isNotEmpty()) {
@@ -20,6 +20,7 @@ fun Route.receiptRouting() {
                 call.respondText("No receipt founds", status = HttpStatusCode.NotFound)
             }
         }
+
         get("{id}") {
             val id = call.parameters["id"]?.toLong() ?: return@get call.respondText(
                 "Missing or malformed id",
@@ -31,18 +32,22 @@ fun Route.receiptRouting() {
                 )
             call.respond(receipt)
         }
+
         post {
             val receipt = call.receive<Receipt>()
             ReceiptRepository.storeReceipt(receipt)
             call.respondText("Receipt stored correctly", status = HttpStatusCode.Created)
         }
+
         delete("{id}") {
-            val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
-            if (receiptStorage.removeIf { it.id == id.toLong() }) {
+            val id = call.parameters["id"]?.toLong() ?: return@delete call.respond(HttpStatusCode.BadRequest)
+            val itemWasDeleted = ReceiptRepository.removeById(id)
+            if (itemWasDeleted != null) {
                 call.respondText("Receipt removed correctly", status = HttpStatusCode.Accepted)
             } else {
                 call.respondText("Not Found", status = HttpStatusCode.NotFound)
             }
         }
+
     }
 }
