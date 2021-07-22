@@ -1,20 +1,23 @@
 package com.codingpizza.financialtracker.routes
 
+import com.codingpizza.financialtracker.ReceiptRepository
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import com.codingpizza.financialtracker.model.Receipt
 import io.ktor.request.*
+import kotlinx.coroutines.runBlocking
 
 fun Route.receiptRouting() {
     val receiptStorage = mutableListOf<Receipt>()
     route("/receipt") {
         get {
-            if (receiptStorage.isNotEmpty()) {
-                call.respond(receiptStorage)
+            val receipts = ReceiptRepository.retrieveReceipts()
+            if (receipts.isNotEmpty()) {
+                call.respond(receipts)
             } else {
-                call.respondText("No receipt founds",status = HttpStatusCode.NotFound)
+                call.respondText("No receipt founds", status = HttpStatusCode.NotFound)
             }
         }
         get("{id}") {
@@ -31,7 +34,7 @@ fun Route.receiptRouting() {
         }
         post {
             val receipt = call.receive<Receipt>()
-            receiptStorage.add(receipt)
+            ReceiptRepository.storeReceipt(receipt)
             call.respondText("Receipt stored correctly", status = HttpStatusCode.Created)
         }
         delete("{id}") {

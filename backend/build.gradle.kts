@@ -11,6 +11,7 @@ dependencies {
     val coroutinesVersion = "1.5.0"
     val ktorVersion = "1.6.1"
     val logbackVersion = "1.2.3"
+    val kmongoVersion = "4.2.8"
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerialization")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("io.ktor:ktor-server-core:$ktorVersion")
@@ -18,6 +19,9 @@ dependencies {
     implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("io.ktor:ktor-websockets:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("org.litote.kmongo:kmongo:$kmongoVersion")
+    implementation("org.litote.kmongo:kmongo-coroutine-serialization:$kmongoVersion")
+
 
     implementation(project(":shared"))
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
