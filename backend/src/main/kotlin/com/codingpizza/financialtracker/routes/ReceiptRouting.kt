@@ -8,8 +8,7 @@ import com.codingpizza.financialtracker.model.Receipt
 import io.ktor.request.*
 
 fun Route.receiptRouting() {
-    val dummyReceipt = Receipt(id = "1", concept = "Pizza", amount = 10.0)
-    val receiptStorage = mutableListOf(dummyReceipt)
+    val receiptStorage = mutableListOf<Receipt>()
     route("/receipt") {
         get {
             if (receiptStorage.isNotEmpty()) {

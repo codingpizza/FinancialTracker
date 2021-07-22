@@ -6,6 +6,7 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.eclipse.jetty.http.HttpHeader
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -13,14 +14,24 @@ import kotlin.test.assertEquals
 class ReceiptRouteTests {
 
     @Test
-    fun testGetReceipt() {
-        withTestApplication({ module(testing = true) }) {
-            val receipt = listOf(Receipt(id = "1", concept = "Pizza", amount = 10.0))
-            val json = Json.encodeToString(receipt)
-            handleRequest(method = HttpMethod.Get, "/receipt").apply {
-                assertEquals(expected = json, actual = response.content)
-                assertEquals(expected = HttpStatusCode.OK, actual = response.status())
-            }
+    fun testSaveReceiptAndRetrieve() = withTestApplication({ module(testing = true) }) {
+        val receipt = Receipt(id = "1", concept = "Pizza", amount = 10.0)
+        val json = Json.encodeToString(receipt)
+
+        with(handleRequest(method = HttpMethod.Post, "/receipt") {
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(json)
+        }) {
+            assertEquals("Receipt stored correctly", response.content)
+        }
+
+        val listOfReceipt = listOf(receipt)
+        val jsonListOfReceipt = Json.encodeToString(listOfReceipt)
+
+        with(handleRequest(method = HttpMethod.Get, "/receipt") {
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        }) {
+            assertEquals(jsonListOfReceipt, response.content)
         }
     }
 
