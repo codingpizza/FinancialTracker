@@ -2,12 +2,11 @@ package com.codingpizza.financialtracker
 
 import com.codingpizza.financialtracker.model.Receipt
 import kotlinx.coroutines.runBlocking
-import org.litote.kmongo.KMongo
-import org.litote.kmongo.getCollection
+import org.litote.kmongo.*
 
 object ReceiptRepository {
     private val client = KMongo.createClient()
-    private const val DatabaseName = "receipts"
+    private const val DatabaseName = "receiptss"
     private val database = client.getDatabase(DatabaseName)
     private val collection = database.getCollection<Receipt>()
 
@@ -19,4 +18,7 @@ object ReceiptRepository {
     }
 
     fun retrieveReceipts(): List<Receipt> = runBlocking { collection.find().toList() }
+
+    fun findById(id: Long): Receipt? = runBlocking { collection.findOne(Receipt::id eq id) }
+
 }

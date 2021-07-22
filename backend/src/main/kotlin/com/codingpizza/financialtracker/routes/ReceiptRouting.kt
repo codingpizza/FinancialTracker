@@ -21,12 +21,11 @@ fun Route.receiptRouting() {
             }
         }
         get("{id}") {
-            val id = call.parameters["id"] ?: return@get call.respondText(
+            val id = call.parameters["id"]?.toLong() ?: return@get call.respondText(
                 "Missing or malformed id",
                 status = HttpStatusCode.BadRequest
             )
-            val receipt =
-                receiptStorage.find { it.id == id } ?: return@get call.respondText(
+            val receipt = ReceiptRepository.findById(id = id) ?: return@get call.respondText(
                     "No receipt with id $id",
                     status = HttpStatusCode.NotFound
                 )
@@ -39,7 +38,7 @@ fun Route.receiptRouting() {
         }
         delete("{id}") {
             val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
-            if (receiptStorage.removeIf { it.id == id }) {
+            if (receiptStorage.removeIf { it.id == id.toLong() }) {
                 call.respondText("Receipt removed correctly", status = HttpStatusCode.Accepted)
             } else {
                 call.respondText("Not Found", status = HttpStatusCode.NotFound)
