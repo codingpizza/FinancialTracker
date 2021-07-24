@@ -3,10 +3,9 @@ package com.codingpizza.financialtracker.android
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -26,7 +25,7 @@ fun ListScreen(viewModel: ListViewModel) {
 
 @Composable
 private fun ReceiptList(receiptList: List<Receipt>) {
-    Scaffold {
+    Scaffold(floatingActionButton = { CreateReceiptFab() }) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -40,11 +39,18 @@ private fun ReceiptList(receiptList: List<Receipt>) {
 }
 
 @Composable
+private fun CreateReceiptFab() {
+    FloatingActionButton(onClick = { /*TODO*/ }) {
+        Icon(imageVector = Icons.Filled.Add, contentDescription = "Add a new Receipt")
+    }
+}
+
+@Composable
 private fun ReceiptRow(item: Receipt) {
     Card(
         elevation = 4.dp, modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp,start = 16.dp,end = 16.dp)
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         Row(
             modifier = Modifier
