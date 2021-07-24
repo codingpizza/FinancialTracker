@@ -24,8 +24,8 @@ fun ListScreen(viewModel: ListViewModel) {
 }
 
 @Composable
-private fun ReceiptList(receiptList: List<Receipt>) {
-    Scaffold(floatingActionButton = { CreateReceiptFab() }) {
+private fun ReceiptList(receiptList: List<Receipt>,onClick: () -> () -> Unit = { {} }) {
+    Scaffold(floatingActionButton = { CreateReceiptFab(onClick) }) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -39,8 +39,8 @@ private fun ReceiptList(receiptList: List<Receipt>) {
 }
 
 @Composable
-private fun CreateReceiptFab() {
-    FloatingActionButton(onClick = { /*TODO*/ }) {
+private fun CreateReceiptFab(onClick: () -> () -> Unit = { {} }) {
+    FloatingActionButton(onClick = onClick()) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = "Add a new Receipt")
     }
 }

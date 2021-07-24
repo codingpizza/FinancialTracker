@@ -1,6 +1,5 @@
 package com.codingpizza.financialtracker.android
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import com.codingpizza.financialtracker.Receipt
 import kotlinx.coroutines.flow.MutableStateFlow
