@@ -15,8 +15,8 @@ class MainViewModel : ViewModel() {
 
     fun getData() {
         viewModelScope.launch {
-            val data = Client().executeRequest()
-            _liveData.value = data
+//            val data = Client().executeRequest()
+//            _liveData.value = data
         }
     }
 }

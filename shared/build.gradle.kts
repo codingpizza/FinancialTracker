@@ -5,6 +5,7 @@ plugins {
     kotlin("native.cocoapods")
     id("com.android.library")
     id("com.squareup.sqldelight")
+    kotlin("plugin.serialization")
 }
 
 version = "1.0"
@@ -31,6 +32,8 @@ kotlin {
     val ktorVersion = "1.6.1"
     val sqlDelightVersion = "1.5.0"
     val slf4jVersion = "1.7.30"
+    val kotlinxSerialization = "1.2.1"
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -38,6 +41,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-cio:$ktorVersion")
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerialization")
 
             }
         }

@@ -24,7 +24,7 @@ class Client {
     suspend fun executeRequest(): String {
         return httpClient.use { autoCloseClient ->
             autoCloseClient.request {
-                url("http://http://10.0.2.2:8888/receipt") // TODO Fix request
+                url("http://10.0.2.2:8888/receipt") // TODO Fix request
                 method = HttpMethod.Get
             }
         }
