@@ -44,7 +44,7 @@ private fun ReceiptRow(item: Receipt) {
     Card(
         elevation = 4.dp, modifier = Modifier
             .fillMaxWidth()
-            .padding(all = 16.dp)
+            .padding(top = 16.dp,start = 16.dp,end = 16.dp)
     ) {
         Row(
             modifier = Modifier
@@ -59,7 +59,6 @@ private fun ReceiptRow(item: Receipt) {
             Text(
                 text = "${item.amount}$", modifier = Modifier
                     .padding(end = 16.dp, top = 16.dp)
-                    .weight(0.1f)
             )
         }
     }
