@@ -5,8 +5,5 @@ import com.codingpizza.financialtracker.data.remote.Client
 object ReceiptRepository {
     private val client = Client()
 
-    suspend fun getAllReceipts() : List<Receipt> {
-        val result = client.executeRequest()
-        return result
-    }
+    suspend fun getAllReceipts(): List<Receipt> = client.executeRequest()
 }
