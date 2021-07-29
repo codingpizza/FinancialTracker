@@ -2,6 +2,8 @@ package com.codingpizza.financialtracker
 import com.codingpizza.financialtracker.routes.receiptRouting
 import io.ktor.application.*
 import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.netty.*
@@ -18,5 +20,10 @@ fun Application.module(testing : Boolean = false) {
 fun Application.registerReceiptRoutes() {
     routing {
         receiptRouting()
+        route("/") {
+            get {
+                call.respondText("Hello world")
+            }
+        }
     }
 }

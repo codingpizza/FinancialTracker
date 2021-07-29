@@ -42,6 +42,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-cio:$ktorVersion")
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerialization")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 
             }
         }
