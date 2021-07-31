@@ -2,22 +2,21 @@ package com.codingpizza.financialtracker.android
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.codingpizza.financialtracker.android.ui.TopBar
 
 @Composable
-fun ReceiptScreen(onClick: (String,Float) -> Unit) {
+fun ReceiptScreen(onClick: (String, Float) -> Unit) {
     var conceptName by remember { mutableStateOf("") }
     var currentAmount by remember { mutableStateOf("") }
-    Scaffold {
+
+    Scaffold(topBar = { TopBar(title = "Create Receipt") }) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
@@ -44,11 +43,11 @@ fun ReceiptScreen(onClick: (String,Float) -> Unit) {
                 )
             }
             Button(
-                onClick = { onClick(conceptName, currentAmount.toFloat())  },
+                onClick = { onClick(conceptName, currentAmount.toFloat()) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .padding(start = 8.dp,end = 8.dp,bottom = 8.dp)
+                    .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
             ) {
                 Text(text = "Save Receipt")
             }
