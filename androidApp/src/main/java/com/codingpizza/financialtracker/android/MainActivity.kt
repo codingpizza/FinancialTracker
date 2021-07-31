@@ -18,14 +18,21 @@ class MainActivity : AppCompatActivity() {
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController,startDestination = Destinations.ListScreen.route) {
-                    composable(route= Destinations.ListScreen.route) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Destinations.ListScreen.route
+                ) {
+                    composable(route = Destinations.ListScreen.route) {
                         val viewModel by viewModels<ListViewModel>()
                         viewModel.retrieveReceipts()
-                        ListScreen(viewModel.uiState, onClick = { navController.navigate(Destinations.ReceiptScreen.route) })
+                        ListScreen(
+                            viewModel.uiState,
+                            onClick = { navController.navigate(Destinations.ReceiptScreen.route) })
                     }
                     composable(route = Destinations.ReceiptScreen.route) {
-                        ReceiptScreen()
+                        ReceiptScreen { concept, amount ->
+                            Log.d("Clicked", "Stored $concept and $amount")
+                        }
                     }
                 }
             }
