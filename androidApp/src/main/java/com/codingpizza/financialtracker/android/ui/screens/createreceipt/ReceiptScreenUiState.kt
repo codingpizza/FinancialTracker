@@ -1,4 +1,4 @@
-package com.codingpizza.financialtracker.android.ui
+package com.codingpizza.financialtracker.android.ui.screens.createreceipt
 
 import com.codingpizza.financialtracker.Receipt
 

@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.android.ui.TopBar
+import com.codingpizza.financialtracker.android.ui.screens.list.ListUiState
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable

@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.codingpizza.financialtracker.android.navigation.Destinations
+import com.codingpizza.financialtracker.android.ui.screens.list.ListViewModel
 
 class MainActivity : AppCompatActivity() {
 
