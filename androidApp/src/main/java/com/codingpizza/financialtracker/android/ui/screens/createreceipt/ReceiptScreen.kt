@@ -1,4 +1,4 @@
-package com.codingpizza.financialtracker.android
+package com.codingpizza.financialtracker.android.ui.screens.createreceipt
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
