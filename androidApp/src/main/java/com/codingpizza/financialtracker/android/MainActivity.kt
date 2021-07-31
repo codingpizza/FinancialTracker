@@ -6,6 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.codingpizza.financialtracker.android.navigation.Destinations
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,9 +17,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                val viewModel by viewModels<ListViewModel>()
-                viewModel.retrieveReceipts()
-                ListScreen(viewModel.uiState,onClick = { Log.d("OnClick","Has hecho click") })
+                val navController = rememberNavController()
+                NavHost(navController = navController,startDestination = Destinations.ListScreen.route) {
+                    composable(route= Destinations.ListScreen.route) {
+                        val viewModel by viewModels<ListViewModel>()
+                        viewModel.retrieveReceipts()
+                        ListScreen(viewModel.uiState, onClick = { navController.navigate(Destinations.ReceiptScreen.route) })
+                    }
+                    composable(route = Destinations.ReceiptScreen.route) {
+                        ReceiptScreen()
+                    }
+                }
             }
         }
     }
