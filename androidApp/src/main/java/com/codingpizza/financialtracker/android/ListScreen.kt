@@ -11,20 +11,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.codingpizza.financialtracker.Receipt
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun ListScreen(viewModel: ListViewModel) {
-    val state = viewModel.uiState.collectAsState()
-    viewModel.retrieveReceipts()
+fun ListScreen(uiState: StateFlow<ListUiState>, onClick: () -> Unit) {
+    val state = uiState.collectAsState()
     when (state.value) {
         ListUiState.Error -> Text(text = "Ha ocurrido un error")
         ListUiState.Loading -> CircularProgressIndicator()
-        is ListUiState.Success -> ReceiptList((state.value as ListUiState.Success).receiptList)
+        is ListUiState.Success -> ReceiptList((state.value as ListUiState.Success).receiptList,onClick = { onClick() })
     }
 }
 
 @Composable
-private fun ReceiptList(receiptList: List<Receipt>,onClick: () -> () -> Unit = { {} }) {
+private fun ReceiptList(receiptList: List<Receipt>,onClick: () -> Unit = { }) {
     Scaffold(floatingActionButton = { CreateReceiptFab(onClick) }) {
         LazyColumn(
             modifier = Modifier
@@ -39,8 +39,8 @@ private fun ReceiptList(receiptList: List<Receipt>,onClick: () -> () -> Unit = {
 }
 
 @Composable
-private fun CreateReceiptFab(onClick: () -> () -> Unit = { {} }) {
-    FloatingActionButton(onClick = onClick()) {
+private fun CreateReceiptFab(onClick: () -> Unit = {} ) {
+    FloatingActionButton(onClick = { onClick() }) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = "Add a new Receipt")
     }
 }
