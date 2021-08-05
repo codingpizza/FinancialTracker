@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.codingpizza.financialtracker.android.navigation.Destinations
 import com.codingpizza.financialtracker.android.ui.screens.createreceipt.ReceiptScreen
+import com.codingpizza.financialtracker.android.ui.screens.createreceipt.ReceiptViewModel
 import com.codingpizza.financialtracker.android.ui.screens.list.ListScreen
 import com.codingpizza.financialtracker.android.ui.screens.list.ListViewModel
 
@@ -33,8 +34,10 @@ class MainActivity : AppCompatActivity() {
                             onClick = { navController.navigate(Destinations.ReceiptScreen.route) })
                     }
                     composable(route = Destinations.ReceiptScreen.route) {
-                        ReceiptScreen { concept, amount ->
+                        val viewModel by viewModels<ReceiptViewModel>()
+                        ReceiptScreen(viewModel = viewModel) { concept, amount ->
                             Log.d("Clicked", "Stored $concept and $amount")
+                            viewModel.storeReceipt(concept,amount.toDouble())
                         }
                     }
                 }

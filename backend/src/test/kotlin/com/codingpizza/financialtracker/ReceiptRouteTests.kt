@@ -15,7 +15,7 @@ class ReceiptRouteTests {
 
     @Test
     fun testSaveReceiptAndRetrieve() = withTestApplication({ module(testing = true) }) {
-        val receipt = Receipt(id = "1", concept = "Pizza", amount = 10.0)
+        val receipt = Receipt(id = 1, concept = "Pizza", amount = 10.0)
         val json = Json.encodeToString(receipt)
 
         with(handleRequest(method = HttpMethod.Post, "/receipt") {

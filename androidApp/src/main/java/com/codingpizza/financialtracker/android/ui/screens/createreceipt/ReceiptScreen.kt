@@ -7,16 +7,52 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codingpizza.financialtracker.android.ui.TopBar
 
 @Composable
-fun ReceiptScreen(onClick: (String, Float) -> Unit) {
-    var conceptName by remember { mutableStateOf("") }
-    var currentAmount by remember { mutableStateOf("") }
+fun ReceiptScreen(
+    viewModel: ReceiptViewModel,
+    id: Long? = null,
+    onClick: (String, Float) -> Unit
+) {
+    val state = viewModel.receiptScreenUiState.collectAsState()
+    id?.let { viewModel.retrieveReceipt(id) }
+    when (state.value) {
+        is ReceiptUiState.Error -> {
+            ReceiptContainer(
+                onClick,
+                uiState = state.value
+            )
+        }
+        ReceiptUiState.Loading -> CenteredLoading()
+        ReceiptUiState.Success -> ReceiptContainer(onClick, uiState = state.value)
+        ReceiptUiState.Idle -> ReceiptContainer(onClick, uiState = state.value)
+    }
+}
 
-    Scaffold(topBar = { TopBar(title = "Create Receipt") }) {
+@Composable
+private fun ReceiptContainer(
+    onClick: (String, Float) -> Unit,
+    uiState: ReceiptUiState,
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    name: String = "",
+    amount: String = ""
+) {
+    var conceptName by remember { mutableStateOf(name) }
+    var currentAmount by remember { mutableStateOf(amount) }
+
+    when(uiState) {
+        is ReceiptUiState.Error -> {
+            LaunchSnackbarEffect(scaffoldState, uiState.errorMessage)
+        }
+        ReceiptUiState.Success -> {
+            LaunchSnackbarEffect(scaffoldState,"Receipt Stored Successfully")
+        }
+        ReceiptUiState.Idle,ReceiptUiState.Loading -> {}
+    }
+
+    Scaffold(topBar = { TopBar(title = "Create Receipt") }, scaffoldState = scaffoldState) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
@@ -55,11 +91,19 @@ fun ReceiptScreen(onClick: (String, Float) -> Unit) {
     }
 }
 
-
-@Preview(
-    showBackground = true
-)
 @Composable
-fun ReceiptScreenPreview() {
-    ReceiptScreen(onClick = { a, b -> })
+private fun LaunchSnackbarEffect(scaffoldState: ScaffoldState, message: String) {
+    LaunchedEffect(scaffoldState.snackbarHostState) {
+        scaffoldState.snackbarHostState.showSnackbar(message = message)
+    }
+}
+
+
+@Composable
+fun CenteredLoading() {
+    Box {
+        CircularProgressIndicator(
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
 }
