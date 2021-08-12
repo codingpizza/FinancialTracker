@@ -39,7 +39,7 @@ class Client {
         val result : HttpResponse = httpClient.post {
             url("http://10.0.2.2:3000/receipt")
             contentType(ContentType.Application.Json)
-            body = Receipt(0, concept, amount) // TODO FIX HARDCODED ID
+            body = Receipt("", concept, amount) // TODO FIX HARDCODED ID
         }
         return if (result.status.isSuccess()) {
             Result.Success(Unit)

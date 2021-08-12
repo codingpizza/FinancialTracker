@@ -7,7 +7,6 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import com.codingpizza.financialtracker.model.Receipt
 import io.ktor.request.*
-import kotlinx.coroutines.runBlocking
 
 fun Route.receiptRouting() {
     route("/receipt") {
@@ -22,7 +21,7 @@ fun Route.receiptRouting() {
         }
 
         get("{id}") {
-            val id = call.parameters["id"]?.toLong() ?: return@get call.respondText(
+            val id = call.parameters["id"] ?: return@get call.respondText(
                 "Missing or malformed id",
                 status = HttpStatusCode.BadRequest
             )
@@ -40,7 +39,7 @@ fun Route.receiptRouting() {
         }
 
         delete("{id}") {
-            val id = call.parameters["id"]?.toLong() ?: return@delete call.respond(HttpStatusCode.BadRequest)
+            val id = call.parameters["id"]?: return@delete call.respond(HttpStatusCode.BadRequest)
             val itemWasDeleted = ReceiptRepository.removeById(id)
             if (itemWasDeleted != null) {
                 call.respondText("Receipt removed correctly", status = HttpStatusCode.Accepted)

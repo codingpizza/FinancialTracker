@@ -21,6 +21,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("org.litote.kmongo:kmongo:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-coroutine-serialization:$kmongoVersion")
+    implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
 
 
     implementation(project(":shared"))

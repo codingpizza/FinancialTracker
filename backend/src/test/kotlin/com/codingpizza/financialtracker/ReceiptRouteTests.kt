@@ -1,13 +1,14 @@
 package com.codingpizza.financialtracker
 
 import com.codingpizza.financialtracker.model.Receipt
-import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.eclipse.jetty.http.HttpHeader
+import org.bson.types.ObjectId
 import org.junit.Test
+import org.litote.kmongo.Id
+import org.litote.kmongo.id.toId
 import kotlin.test.assertEquals
 
 
@@ -15,7 +16,7 @@ class ReceiptRouteTests {
 
     @Test
     fun testSaveReceiptAndRetrieve() = withTestApplication({ module(testing = true) }) {
-        val receipt = Receipt(id = 1, concept = "Pizza", amount = 10.0)
+        val receipt = Receipt(_id = ObjectId("1").toId(), concept = "Pizza", amount = 10.0)
         val json = Json.encodeToString(receipt)
 
         with(handleRequest(method = HttpMethod.Post, "/receipt") {
