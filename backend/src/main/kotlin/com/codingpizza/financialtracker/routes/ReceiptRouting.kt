@@ -1,6 +1,7 @@
 package com.codingpizza.financialtracker.routes
 
 import com.codingpizza.financialtracker.ReceiptRepository
+import com.codingpizza.financialtracker.model.DeleteResult
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
@@ -40,11 +41,9 @@ fun Route.receiptRouting() {
 
         delete("{id}") {
             val id = call.parameters["id"]?: return@delete call.respond(HttpStatusCode.BadRequest)
-            val itemWasDeleted = ReceiptRepository.removeById(id)
-            if (itemWasDeleted != null) {
-                call.respondText("Receipt removed correctly", status = HttpStatusCode.Accepted)
-            } else {
-                call.respondText("Not Found", status = HttpStatusCode.NotFound)
+            when (ReceiptRepository.removeById(id)) {
+                DeleteResult.Error -> call.respondText("No receipt with id $id", status = HttpStatusCode.NotFound)
+                DeleteResult.Success -> call.respondText("Receipt removed correctly", status = HttpStatusCode.Accepted)
             }
         }
 
