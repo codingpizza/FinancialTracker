@@ -52,9 +52,9 @@ class MainActivity : AppCompatActivity() {
                         val id = backStackEntry.arguments?.getString("receiptId")
                         Log.d("Route","Id disponible: $id")
                         val viewModel by viewModels<ReceiptViewModel>()
-                        ReceiptScreen(viewModel = viewModel,receiptId = id) { concept, amount ->
+                        ReceiptScreen(viewModel = viewModel,receiptId = id) { concept, amount,currentId  ->
                             Log.d("Clicked", "Stored $concept and $amount")
-                            viewModel.storeReceipt(concept,amount.toDouble())
+                            viewModel.storeReceipt(concept,amount.toDouble(),currentId)
                         }
                     }
                 }

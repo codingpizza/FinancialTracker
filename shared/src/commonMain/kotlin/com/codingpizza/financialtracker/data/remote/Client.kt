@@ -39,11 +39,16 @@ class Client {
     suspend fun retrieveAllReceipts(): List<Receipt> =
         httpClient.get { url("${baseUrl}/receipt") }
 
-    suspend fun storeReceipt(concept: String, amount: Double): Result<Unit> {
+    suspend fun storeReceipt(concept: String, amount: Double, currentReceiptId: String?): Result<Unit> {
+        val requestBody = if (currentReceiptId == null) {
+            Receipt("", concept, amount)
+        } else {
+            Receipt(currentReceiptId, concept, amount)
+        }
         val result : HttpResponse = httpClient.post {
             url("${baseUrl}/receipt")
             contentType(ContentType.Application.Json)
-            body = Receipt("", concept, amount) // TODO FIX HARDCODED ID
+            body = requestBody
         }
         return if (result.status.isSuccess()) {
             Result.Success(Unit)
