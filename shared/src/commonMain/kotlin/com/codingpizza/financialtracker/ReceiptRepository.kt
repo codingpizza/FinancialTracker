@@ -7,7 +7,8 @@ object ReceiptRepository {
 
     suspend fun getAllReceipts(): List<Receipt> = client.retrieveAllReceipts()
 
-    suspend fun storeReceipt(concept: String, amount: Double): Result<Unit> {
-        return client.storeReceipt(concept,amount)
-    }
+    suspend fun storeReceipt(concept: String, amount: Double): Result<Unit> =
+        client.storeReceipt(concept,amount)
+
+    suspend fun getReceiptById(id: String): Result<Receipt> = client.retrieveReceiptById(id)
 }

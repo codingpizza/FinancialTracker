@@ -14,6 +14,7 @@ import com.codingpizza.financialtracker.android.ui.screens.createreceipt.Receipt
 import com.codingpizza.financialtracker.android.ui.screens.createreceipt.ReceiptViewModel
 import com.codingpizza.financialtracker.android.ui.screens.list.ListScreen
 import com.codingpizza.financialtracker.android.ui.screens.list.ListViewModel
+import com.codingpizza.financialtracker.android.ui.screens.list.ReceiptClickedState
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,11 +32,27 @@ class MainActivity : AppCompatActivity() {
                         viewModel.retrieveReceipts()
                         ListScreen(
                             viewModel.uiState,
-                            onClick = { navController.navigate(Destinations.ReceiptScreen.route) })
+                            onClick = { receiptClicked ->
+                                val id = when (receiptClicked) {
+                                    is ReceiptClickedState.ModifyReceiptState -> {
+                                        val route = Destinations.ReceiptScreen.createRoute(receiptClicked.id)
+                                        Log.d("Route","La ruta es: $route")
+                                        route
+                                    }
+                                    ReceiptClickedState.NewReceiptState -> {
+                                        val route = Destinations.ReceiptScreen.route
+                                        Log.d("Route","La ruta es: $route")
+                                        route
+                                    }
+                                }
+                                navController.navigate(route = id)
+                            })
                     }
-                    composable(route = Destinations.ReceiptScreen.route) {
+                    composable(route = Destinations.ReceiptScreen.route) { backStackEntry ->
+                        val id = backStackEntry.arguments?.getString("receiptId")
+                        Log.d("Route","Id disponible: $id")
                         val viewModel by viewModels<ReceiptViewModel>()
-                        ReceiptScreen(viewModel = viewModel) { concept, amount ->
+                        ReceiptScreen(viewModel = viewModel,receiptId = id) { concept, amount ->
                             Log.d("Clicked", "Stored $concept and $amount")
                             viewModel.storeReceipt(concept,amount.toDouble())
                         }

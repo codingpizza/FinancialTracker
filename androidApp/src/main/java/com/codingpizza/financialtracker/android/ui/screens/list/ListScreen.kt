@@ -1,5 +1,6 @@
 package com.codingpizza.financialtracker.android.ui.screens.list
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,19 +16,20 @@ import com.codingpizza.financialtracker.android.ui.TopBar
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun ListScreen(uiState: StateFlow<ListUiState>, onClick: () -> Unit) {
+fun ListScreen(uiState: StateFlow<ListUiState>, onClick: (ReceiptClickedState) -> Unit) {
     val state = uiState.collectAsState()
     when (state.value) {
         ListUiState.Error -> Text(text = "Ha ocurrido un error")
         ListUiState.Loading -> CircularProgressIndicator()
         is ListUiState.Success -> ReceiptList(
-            (state.value as ListUiState.Success).receiptList,
-            onClick = { onClick() })
+            receiptList = (state.value as ListUiState.Success).receiptList,
+            onClick = onClick
+        )
     }
 }
 
 @Composable
-private fun ReceiptList(receiptList: List<Receipt>, onClick: () -> Unit = { }) {
+private fun ReceiptList(receiptList: List<Receipt>, onClick: (ReceiptClickedState) -> Unit) {
     Scaffold(
         floatingActionButton = { CreateReceiptFab(onClick) },
         topBar = { TopBar(title = "Your Receipts") }) {
@@ -37,21 +39,26 @@ private fun ReceiptList(receiptList: List<Receipt>, onClick: () -> Unit = { }) {
                 .fillMaxHeight()
         ) {
             items(items = receiptList) { item ->
-                ReceiptRow(item)
+                ReceiptRow(item) {
+                    onClick(it)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun CreateReceiptFab(onClick: () -> Unit = {}) {
-    FloatingActionButton(onClick = { onClick() }) {
+private fun CreateReceiptFab(onClick: (ReceiptClickedState.NewReceiptState) -> Unit = {}) {
+    FloatingActionButton(onClick = { onClick(ReceiptClickedState.NewReceiptState) }) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = "Add a new Receipt")
     }
 }
 
 @Composable
-private fun ReceiptRow(item: Receipt) {
+private fun ReceiptRow(
+    item: Receipt,
+    onReceiptClick: (ReceiptClickedState.ModifyReceiptState) -> Unit
+) {
     Card(
         elevation = 4.dp, modifier = Modifier
             .fillMaxWidth()
@@ -61,6 +68,7 @@ private fun ReceiptRow(item: Receipt) {
             modifier = Modifier
                 .fillMaxWidth()
                 .requiredHeight(60.dp)
+                .clickable(onClick = { onReceiptClick(ReceiptClickedState.ModifyReceiptState(item.id)) })
         ) {
             Text(
                 text = item.concept, modifier = Modifier

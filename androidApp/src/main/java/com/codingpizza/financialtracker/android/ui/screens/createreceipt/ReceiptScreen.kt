@@ -13,11 +13,11 @@ import com.codingpizza.financialtracker.android.ui.TopBar
 @Composable
 fun ReceiptScreen(
     viewModel: ReceiptViewModel,
-    id: Long? = null,
-    onClick: (String, Float) -> Unit
+    receiptId: String?,
+    onClick: (String, Float) -> Unit,
 ) {
     val state = viewModel.receiptScreenUiState.collectAsState()
-    id?.let { viewModel.retrieveReceipt(id) }
+    receiptId?.let { viewModel.retrieveReceipt(it) }
     when (state.value) {
         is ReceiptUiState.Error -> {
             ReceiptContainer(
@@ -28,6 +28,10 @@ fun ReceiptScreen(
         ReceiptUiState.Loading -> CenteredLoading()
         ReceiptUiState.Success -> ReceiptContainer(onClick, uiState = state.value)
         ReceiptUiState.Idle -> ReceiptContainer(onClick, uiState = state.value)
+        is ReceiptUiState.SuccessRetrievingReceipt -> ReceiptContainer(
+            onClick = onClick,
+            uiState = state.value
+        )
     }
 }
 
@@ -35,12 +39,20 @@ fun ReceiptScreen(
 private fun ReceiptContainer(
     onClick: (String, Float) -> Unit,
     uiState: ReceiptUiState,
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
-    name: String = "",
-    amount: String = ""
+    scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
-    var conceptName by remember { mutableStateOf(name) }
-    var currentAmount by remember { mutableStateOf(amount) }
+    val conceptNameByState = when (uiState){
+        is ReceiptUiState.SuccessRetrievingReceipt -> uiState.receipt.concept
+        ReceiptUiState.Success -> ""
+        else -> ""
+    }
+    val conceptAmountByState = when (uiState){
+        is ReceiptUiState.SuccessRetrievingReceipt -> uiState.receipt.amount.toString()
+        ReceiptUiState.Success -> ""
+        else -> ""
+    }
+    var conceptName by remember { mutableStateOf(conceptNameByState) }
+    var currentAmount by remember { mutableStateOf(conceptAmountByState) }
 
     when(uiState) {
         is ReceiptUiState.Error -> {
@@ -50,6 +62,7 @@ private fun ReceiptContainer(
             LaunchSnackbarEffect(scaffoldState,"Receipt Stored Successfully")
         }
         ReceiptUiState.Idle,ReceiptUiState.Loading -> {}
+        is ReceiptUiState.SuccessRetrievingReceipt -> {}
     }
 
     Scaffold(topBar = { TopBar(title = "Create Receipt") }, scaffoldState = scaffoldState) {

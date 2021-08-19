@@ -2,6 +2,7 @@ package com.codingpizza.financialtracker.android.ui.screens.createreceipt
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codingpizza.financialtracker.ReceiptRepository
 import com.codingpizza.financialtracker.Result
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +24,13 @@ class ReceiptViewModel : ViewModel() {
         }
     }
 
-    fun retrieveReceipt(id: Long) {
-        TODO("Not yet implemented")
+    fun retrieveReceipt(id: String) {
+        viewModelScope.launch {
+            when (val result = ReceiptRepository.getReceiptById(id)) {
+                is Result.Error -> _receiptScreenUiState.value = ReceiptUiState.Error(result.errorMessage)
+                is Result.Success -> _receiptScreenUiState.value = ReceiptUiState.SuccessRetrievingReceipt(result.data)
+            }
+        }
     }
 
 }

@@ -12,8 +12,12 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.core.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class Client {
+
+    private val baseUrl = "http://10.0.2.2:3000"
 
     private val httpClient = HttpClient(CIO) {
         expectSuccess = false
@@ -33,16 +37,26 @@ class Client {
     }
 
     suspend fun retrieveAllReceipts(): List<Receipt> =
-        httpClient.get { url("http://10.0.2.2:3000/receipt") }
+        httpClient.get { url("${baseUrl}/receipt") }
 
     suspend fun storeReceipt(concept: String, amount: Double): Result<Unit> {
         val result : HttpResponse = httpClient.post {
-            url("http://10.0.2.2:3000/receipt")
+            url("${baseUrl}/receipt")
             contentType(ContentType.Application.Json)
             body = Receipt("", concept, amount) // TODO FIX HARDCODED ID
         }
         return if (result.status.isSuccess()) {
             Result.Success(Unit)
+        } else {
+            Result.Error(result.status.description,result.status.value)
+        }
+    }
+
+    suspend fun retrieveReceiptById(id: String): Result<Receipt> {
+        val result : HttpResponse = httpClient.get { url("${baseUrl}/receipt/${id}") }
+        return if (result.status.isSuccess()) {
+            val parsedResult : Receipt = Json.decodeFromString(string = result.readText())
+            Result.Success(parsedResult)
         } else {
             Result.Error(result.status.description,result.status.value)
         }
