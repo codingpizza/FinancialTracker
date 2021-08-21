@@ -1,6 +1,5 @@
 package com.codingpizza.financialtracker.android.ui.screens.createreceipt
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codingpizza.financialtracker.ReceiptRepository

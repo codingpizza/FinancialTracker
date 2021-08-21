@@ -32,24 +32,22 @@ class MainActivity : AppCompatActivity() {
                     startDestination = Destinations.ListScreen.route
                 ) {
                     composable(route = Destinations.ListScreen.route) {
-                        listViewModel.retrieveReceipts()
-                        ListScreen(
-                            listViewModel.uiState,
-                            onClick = { receiptClicked ->
-                                val id = when (receiptClicked) {
-                                    is ReceiptClickedState.ModifyReceiptState -> {
-                                        val route = Destinations.ReceiptScreen.createRoute(receiptClicked.id)
-                                        Log.d("Route","La ruta es: $route")
-                                        route
-                                    }
-                                    ReceiptClickedState.NewReceiptState -> {
-                                        val route = Destinations.ReceiptScreen.route
-                                        Log.d("Route","La ruta es: $route")
-                                        route
-                                    }
+                        ListScreen(listViewModel) { receiptClicked ->
+                            val id = when (receiptClicked) {
+                                is ReceiptClickedState.ModifyReceiptState -> {
+                                    val route =
+                                        Destinations.ReceiptScreen.createRoute(receiptClicked.id)
+                                    Log.d("Route", "La ruta es: $route")
+                                    route
                                 }
-                                navController.navigate(route = id)
-                            })
+                                ReceiptClickedState.NewReceiptState -> {
+                                    val route = Destinations.ReceiptScreen.route
+                                    Log.d("Route", "La ruta es: $route")
+                                    route
+                                }
+                            }
+                            navController.navigate(route = id)
+                        }
                     }
                     composable(route = Destinations.ReceiptScreen.route) { backStackEntry ->
                         val id = backStackEntry.arguments?.getString("receiptId")

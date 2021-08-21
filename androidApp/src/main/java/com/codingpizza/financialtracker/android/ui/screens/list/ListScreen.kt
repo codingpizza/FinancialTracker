@@ -9,20 +9,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.android.ui.TopBar
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun ListScreen(uiState: StateFlow<ListUiState>, onClick: (ReceiptClickedState) -> Unit) {
-    val state = uiState.collectAsState()
-    when (state.value) {
+fun ListScreen(viewModel: ListViewModel, onClick: (ReceiptClickedState) -> Unit) {
+    val state by viewModel.uiState.collectAsState()
+    when (state) {
         ListUiState.Error -> Text(text = "Ha ocurrido un error")
-        ListUiState.Loading -> CircularProgressIndicator()
+        ListUiState.Loading -> {
+            viewModel.retrieveReceipts()
+            CircularProgressIndicator()
+        }
         is ListUiState.Success -> ReceiptList(
-            receiptList = (state.value as ListUiState.Success).receiptList,
+            receiptList = (state as ListUiState.Success).receiptList,
             onClick = onClick
         )
     }
