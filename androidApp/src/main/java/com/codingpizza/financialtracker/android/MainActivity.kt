@@ -18,6 +18,10 @@ import com.codingpizza.financialtracker.android.ui.screens.list.ReceiptClickedSt
 
 class MainActivity : AppCompatActivity() {
 
+    private val receiptViewModel by viewModels<ReceiptViewModel>()
+    private val listViewModel by viewModels<ListViewModel>()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -28,10 +32,9 @@ class MainActivity : AppCompatActivity() {
                     startDestination = Destinations.ListScreen.route
                 ) {
                     composable(route = Destinations.ListScreen.route) {
-                        val viewModel by viewModels<ListViewModel>()
-                        viewModel.retrieveReceipts()
+                        listViewModel.retrieveReceipts()
                         ListScreen(
-                            viewModel.uiState,
+                            listViewModel.uiState,
                             onClick = { receiptClicked ->
                                 val id = when (receiptClicked) {
                                     is ReceiptClickedState.ModifyReceiptState -> {
@@ -51,10 +54,9 @@ class MainActivity : AppCompatActivity() {
                     composable(route = Destinations.ReceiptScreen.route) { backStackEntry ->
                         val id = backStackEntry.arguments?.getString("receiptId")
                         Log.d("Route","Id disponible: $id")
-                        val viewModel by viewModels<ReceiptViewModel>()
-                        ReceiptScreen(viewModel = viewModel,receiptId = id) { concept, amount,currentId  ->
+                        ReceiptScreen(viewModel = receiptViewModel,receiptId = id) { concept, amount,currentId  ->
                             Log.d("Clicked", "Stored $concept and $amount")
-                            viewModel.storeReceipt(concept,amount.toDouble(),currentId)
+                            receiptViewModel.storeReceipt(concept,amount.toDouble(),currentId)
                         }
                     }
                 }

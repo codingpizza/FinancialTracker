@@ -16,11 +16,15 @@ fun ReceiptScreen(
     receiptId: String?,
     onClick: (String, Float, String?) -> Unit,
 ) {
-    viewModel.initialize(receiptId)
-    val state = viewModel.receiptScreenUiState.collectAsState()
-    when (state.value) {
-        ReceiptUiState.Loading -> CenteredLoading()
-        else -> ReceiptContainer(onClick, uiState = state.value, currentReceiptId = receiptId)
+    val state by viewModel.receiptScreenUiState.collectAsState()
+    when (state) {
+        ReceiptUiState.Idle -> {
+            viewModel.initialize(receiptId)
+        }
+        ReceiptUiState.Loading -> {
+            CenteredLoading()
+        }
+        else -> ReceiptContainer(onClick, uiState = state, currentReceiptId = receiptId)
     }
 }
 

@@ -1,5 +1,6 @@
 package com.codingpizza.financialtracker.android.ui.screens.createreceipt
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codingpizza.financialtracker.ReceiptRepository
@@ -24,7 +25,7 @@ class ReceiptViewModel : ViewModel() {
         }
     }
 
-    fun retrieveReceipt(id: String) {
+    private fun retrieveReceipt(id: String) {
         viewModelScope.launch(context = Dispatchers.IO) {
             when (val result = ReceiptRepository.getReceiptById(id)) {
                 is Result.Error -> _receiptScreenUiState.value = ReceiptUiState.Error(result.errorMessage)
