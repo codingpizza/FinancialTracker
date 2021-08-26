@@ -3,38 +3,15 @@ package com.codingpizza.financialtracker.data.remote
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.Result
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.features.logging.*
-import io.ktor.client.features.observer.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.utils.io.core.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import org.koin.core.component.KoinComponent
 
-class Client {
-
+class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
     private val baseUrl = "http://10.0.2.2:3000"
-
-    private val httpClient = HttpClient(CIO) {
-        expectSuccess = false
-        ResponseObserver { httpResponse ->
-            println("HTTP status: ${httpResponse.status.value}")
-        }
-        install(Logging) {
-            logger = Logger.DEFAULT
-            level = LogLevel.ALL
-        }
-        install(JsonFeature) {
-            serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
-                prettyPrint = true
-                isLenient = true
-            })
-        }
-    }
 
     suspend fun retrieveAllReceipts(): List<Receipt> =
         httpClient.get { url("${baseUrl}/receipt") }

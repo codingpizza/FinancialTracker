@@ -9,31 +9,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.codingpizza.financialtracker.android.ui.TopBar
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun ReceiptScreen(
-    viewModel: ReceiptViewModel,
-    receiptId: String?,
-    onClick: (String, Float, String?) -> Unit,
-) {
+    viewModel: ReceiptViewModel = getViewModel(),
+    receiptId: String?) {
     val state by viewModel.receiptScreenUiState.collectAsState()
     when (state) {
-        ReceiptUiState.Idle -> {
-            viewModel.initialize(receiptId)
+        ReceiptUiState.Idle -> viewModel.initialize(receiptId)
+        ReceiptUiState.Loading -> CenteredLoading()
+        else -> ReceiptContainer(uiState = state, currentReceiptId = receiptId) { concept, amount,currentId  ->
+            viewModel.storeReceipt(concept,amount.toDouble(),currentId)
         }
-        ReceiptUiState.Loading -> {
-            CenteredLoading()
-        }
-        else -> ReceiptContainer(onClick, uiState = state, currentReceiptId = receiptId)
     }
 }
 
 @Composable
 private fun ReceiptContainer(
-    onClick: (String, Float, String?) -> Unit,
     uiState: ReceiptUiState,
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    currentReceiptId: String? = null
+    currentReceiptId: String? = null,
+    onClick: (String, Float, String?) -> Unit,
 ) {
     val conceptNameByState = when (uiState) {
         is ReceiptUiState.SuccessRetrievingReceipt -> uiState.receipt.concept

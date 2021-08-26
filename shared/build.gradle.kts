@@ -33,6 +33,7 @@ kotlin {
     val sqlDelightVersion = "1.5.0"
     val slf4jVersion = "1.7.30"
     val kotlinxSerialization = "1.2.1"
+    val koinVersion = "3.1.2"
 
     sourceSets {
         val commonMain by getting {
@@ -43,6 +44,9 @@ kotlin {
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerialization")
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.insert-koin:koin-core:${koinVersion}")
+                implementation("io.insert-koin:koin-test:${koinVersion}")
             }
         }
         val commonTest by getting {

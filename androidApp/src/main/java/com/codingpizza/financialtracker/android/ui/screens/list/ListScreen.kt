@@ -14,9 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.android.ui.TopBar
+import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun ListScreen(viewModel: ListViewModel, onClick: (ReceiptClickedState) -> Unit) {
+fun ListScreen(viewModel: ListViewModel = getViewModel(), onClick: (ReceiptClickedState) -> Unit) {
     val state by viewModel.uiState.collectAsState()
     when (state) {
         ListUiState.Error -> Text(text = "Ha ocurrido un error")

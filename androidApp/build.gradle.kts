@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    val koinVersion = "3.1.2"
     implementation(project(":shared"))
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.appcompat:appcompat:1.3.1")
@@ -58,6 +59,10 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.3.0")
     implementation("androidx.navigation:navigation-compose:2.4.0-alpha05")
 
+    // Koin
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
 
     // Tooling support (Previews, etc.)
     implementation("androidx.compose.ui:ui-tooling:1.0.0")
@@ -73,4 +78,7 @@ dependencies {
 
     // UI Tests
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.0.0")
+
+    // Test Koin
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
 }

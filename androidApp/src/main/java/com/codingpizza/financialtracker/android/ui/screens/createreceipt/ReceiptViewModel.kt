@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ReceiptViewModel : ViewModel() {
+class ReceiptViewModel(
+    private val receiptRepository : ReceiptRepository
+) : ViewModel() {
 
     private val _receiptScreenUiState: MutableStateFlow<ReceiptUiState> =
         MutableStateFlow(ReceiptUiState.Idle)
@@ -17,7 +19,7 @@ class ReceiptViewModel : ViewModel() {
 
     fun storeReceipt(concept: String, amount: Double, currentReceiptId: String?) {
         viewModelScope.launch(context = Dispatchers.IO) {
-            when (val result = ReceiptRepository.storeReceipt(concept, amount, currentReceiptId)) {
+            when (val result = receiptRepository.storeReceipt(concept, amount, currentReceiptId)) {
                 is Result.Error -> _receiptScreenUiState.value = ReceiptUiState.Error(result.errorMessage)
                 is Result.Success -> _receiptScreenUiState.value = ReceiptUiState.Success
             }
@@ -26,7 +28,7 @@ class ReceiptViewModel : ViewModel() {
 
     private fun retrieveReceipt(id: String) {
         viewModelScope.launch(context = Dispatchers.IO) {
-            when (val result = ReceiptRepository.getReceiptById(id)) {
+            when (val result = receiptRepository.getReceiptById(id)) {
                 is Result.Error -> _receiptScreenUiState.value = ReceiptUiState.Error(result.errorMessage)
                 is Result.Success -> _receiptScreenUiState.value = ReceiptUiState.SuccessRetrievingReceipt(result.data)
             }
