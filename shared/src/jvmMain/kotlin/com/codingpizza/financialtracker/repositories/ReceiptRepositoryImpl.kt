@@ -3,22 +3,20 @@ package com.codingpizza.financialtracker.repositories
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.model.DeleteStatus
 import com.codingpizza.financialtracker.model.cache.CacheReceipt
+import com.codingpizza.financialtracker.model.dto.ReceiptDto
 import com.mongodb.client.MongoCollection
 import kotlinx.coroutines.runBlocking
-import org.bson.types.ObjectId
 import org.litote.kmongo.deleteOneById
-import org.litote.kmongo.id.toId
 import org.litote.kmongo.util.idValue
 
 class ReceiptRepositoryImpl(
     private val collection : MongoCollection<CacheReceipt>
-) : ReceiptRepository {
+) : ReceiptRepository, ReceiptDtoStoreRepository {
 
-    override fun storeReceipt(receipt: Receipt) {
+    override fun storeReceipt(receipt: ReceiptDto) {
         runBlocking {
             collection.insertOne(
                 CacheReceipt(
-                    _id = ObjectId(receipt.id.toByteArray()).toId(),
                     concept = receipt.concept,
                     amount = receipt.amount
                 )

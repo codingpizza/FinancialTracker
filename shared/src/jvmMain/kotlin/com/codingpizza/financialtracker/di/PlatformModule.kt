@@ -1,6 +1,7 @@
 package com.codingpizza.financialtracker.di
 
 import com.codingpizza.financialtracker.model.cache.CacheReceipt
+import com.codingpizza.financialtracker.repositories.ReceiptDtoStoreRepository
 import com.codingpizza.financialtracker.repositories.ReceiptRepository
 import com.codingpizza.financialtracker.repositories.ReceiptRepositoryImpl
 import com.mongodb.client.MongoClient
@@ -18,6 +19,7 @@ actual fun platformModule() : Module = module {
     single { provideDatabase(client = get()) }
     single { provideCollection(database = get()) }
     single<ReceiptRepository> { ReceiptRepositoryImpl(collection = get()) }
+    single<ReceiptDtoStoreRepository> { ReceiptRepositoryImpl(collection = get()) }
 }
 
 fun provideCollection(database: MongoDatabase) : MongoCollection<CacheReceipt> =

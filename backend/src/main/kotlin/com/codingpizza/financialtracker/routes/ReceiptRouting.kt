@@ -1,15 +1,16 @@
 package com.codingpizza.financialtracker.routes
 
 import com.codingpizza.financialtracker.model.DeleteStatus
-import com.codingpizza.financialtracker.Receipt
+import com.codingpizza.financialtracker.model.dto.ReceiptDto
 import com.codingpizza.financialtracker.repositories.ReceiptRepository
+import com.codingpizza.financialtracker.repositories.ReceiptDtoStoreRepository
 import io.ktor.application.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.request.*
 
-fun Route.receiptRouting(receiptRepository: ReceiptRepository) {
+fun Route.receiptRouting(receiptRepository: ReceiptRepository,storeRepository: ReceiptDtoStoreRepository) {
     route("/receipt") {
 
         get {
@@ -34,8 +35,8 @@ fun Route.receiptRouting(receiptRepository: ReceiptRepository) {
         }
 
         post {
-            val receipt = call.receive<Receipt>()
-            receiptRepository.storeReceipt(receipt)
+            val receipt = call.receive<ReceiptDto>()
+            storeRepository.storeReceipt(receipt)
             call.respondText("Receipt stored correctly", status = HttpStatusCode.Created)
         }
 
