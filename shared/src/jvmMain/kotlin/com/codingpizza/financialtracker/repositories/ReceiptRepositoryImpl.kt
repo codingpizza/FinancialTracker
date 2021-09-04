@@ -1,53 +1,49 @@
 package com.codingpizza.financialtracker.repositories
 
 import com.codingpizza.financialtracker.Receipt
+import com.codingpizza.financialtracker.db.FinancialTrackerDatabase
 import com.codingpizza.financialtracker.model.DeleteStatus
-import com.codingpizza.financialtracker.model.cache.CacheReceipt
 import com.codingpizza.financialtracker.model.dto.ReceiptDto
-import com.mongodb.client.MongoCollection
 import kotlinx.coroutines.runBlocking
-import org.litote.kmongo.deleteOneById
-import org.litote.kmongo.util.idValue
 
 class ReceiptRepositoryImpl(
-    private val collection : MongoCollection<CacheReceipt>
+    private val database: FinancialTrackerDatabase
 ) : ReceiptRepository, ReceiptDtoStoreRepository {
 
     override fun storeReceipt(receipt: ReceiptDto) {
         runBlocking {
-            collection.insertOne(
-                CacheReceipt(
-                    concept = receipt.concept,
-                    amount = receipt.amount
-                )
+            database.financialTrackerQueries.insertReceipt(
+                id = null,
+                concept = receipt.concept,
+                amount = receipt.amount
             )
         }
     }
 
     override fun retrieveReceipts(): List<Receipt> {
         return runBlocking {
-            val cacheReceiptList = collection.find().toList()
-            cacheReceiptList.toReceipts()
+            val receipts = database.financialTrackerQueries.retrieveReceipt().executeAsList()
+            receipts.toReceipts()
         }
     }
 
-    private fun List<CacheReceipt>?.toReceipts(): List<Receipt> {
+    private fun List<com.codingpizza.financialtracker.db.CacheReceipt>?.toReceipts(): List<Receipt> {
         return if (isNullOrEmpty()) emptyList()
         else map { cacheReceipt ->
             Receipt(
-                id = cacheReceipt._id.idValue.toString(),
+                id = cacheReceipt.id.toString(),
                 concept = cacheReceipt.concept,
                 amount = cacheReceipt.amount
             )
         }
     }
 
+
     override fun findById(id: String): Receipt? {
-        val cacheReceipt = collection.find().toList()
-            .firstOrNull { receiptItem -> receiptItem.idValue.toString() == id }
+        val cacheReceipt = database.financialTrackerQueries.findReceiptByid(id.toLong()).executeAsOneOrNull()
         return if (cacheReceipt != null) {
             Receipt(
-                id = cacheReceipt._id.idValue.toString(),
+                id = cacheReceipt.id.toString(),
                 concept = cacheReceipt.concept,
                 amount = cacheReceipt.amount
             )
@@ -56,14 +52,8 @@ class ReceiptRepositoryImpl(
 
     override fun removeById(id: String): DeleteStatus {
         return runBlocking {
-            val receipt = collection.find().toList()
-                .firstOrNull { receiptItem -> receiptItem.idValue.toString() == id }
-            if (receipt != null) {
-                collection.deleteOneById(receipt._id)
-                DeleteStatus.Success
-            } else {
-                DeleteStatus.Error
-            }
+            database.financialTrackerQueries.deleteReceiptById(id.toLong())
+            DeleteStatus.Success // TODO Asegurarnos de que funcione la transaccion
         }
     }
 }

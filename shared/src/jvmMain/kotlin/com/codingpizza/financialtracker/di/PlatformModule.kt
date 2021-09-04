@@ -1,35 +1,31 @@
 package com.codingpizza.financialtracker.di
 
-import com.codingpizza.financialtracker.model.cache.CacheReceipt
+import com.codingpizza.financialtracker.db.FinancialTrackerDatabase
 import com.codingpizza.financialtracker.repositories.ReceiptDtoStoreRepository
 import com.codingpizza.financialtracker.repositories.ReceiptRepository
 import com.codingpizza.financialtracker.repositories.ReceiptRepositoryImpl
-import com.mongodb.client.MongoClient
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.MongoDatabase
+import com.squareup.sqldelight.db.SqlDriver
+import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.litote.kmongo.KMongo
-import org.litote.kmongo.getCollection
 
-private const val DatabaseName = "receiptss"
-
-actual fun platformModule() : Module = module {
-    single { KMongo.createClient() }
-    single { provideDatabase(client = get()) }
-    single { provideCollection(database = get()) }
-    single<ReceiptRepository> { ReceiptRepositoryImpl(collection = get()) }
-    single<ReceiptDtoStoreRepository> { ReceiptRepositoryImpl(collection = get()) }
+actual fun platformModule(): Module = module {
+    single { provideSqlDelightDriver() }
+    single { provideSqlDelightDatabase(driver = get()) }
+    single<ReceiptRepository> { ReceiptRepositoryImpl(database = get()) }
+    single<ReceiptDtoStoreRepository> {
+        ReceiptRepositoryImpl(
+            database = get()
+        )
+    }
 }
 
-fun provideCollection(database: MongoDatabase) : MongoCollection<CacheReceipt> =
-    database.getCollection()
 
-fun provideDatabase(client: MongoClient) : MongoDatabase = client.getDatabase(DatabaseName)
+private fun provideSqlDelightDriver(): SqlDriver {
+    val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+    FinancialTrackerDatabase.Schema.create(driver)
+    return driver
+}
 
-/*
-    private val client = KMongo.createClient()
-    private const val DatabaseName = "receiptss"
-    private val database = client.getDatabase(DatabaseName)
-    private val collection = database.getCollection<Receipt>()
- */
+private fun provideSqlDelightDatabase(driver: SqlDriver): FinancialTrackerDatabase =
+    FinancialTrackerDatabase(driver)

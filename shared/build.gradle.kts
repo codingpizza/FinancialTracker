@@ -34,8 +34,6 @@ kotlin {
     val slf4jVersion = "1.7.30"
     val kotlinxSerialization = "1.2.1"
     val koinVersion = "3.1.2"
-    val kmongoVersion = "4.2.8"
-
 
     sourceSets {
         val commonMain by getting {
@@ -60,6 +58,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation("com.squareup.sqldelight:android-driver:$sqlDelightVersion")
             }
         }
         val androidTest by getting {
@@ -71,6 +70,7 @@ kotlin {
         val iosMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-ios:$ktorVersion")
+                implementation("com.squareup.sqldelight:native-driver:$sqlDelightVersion")
             }
         }
         val iosTest by getting
@@ -79,9 +79,6 @@ kotlin {
             implementation("io.ktor:ktor-client-apache:$ktorVersion")
             implementation("com.squareup.sqldelight:sqlite-driver:$sqlDelightVersion")
             implementation("org.slf4j:slf4j-simple:$slf4jVersion")
-            implementation("org.litote.kmongo:kmongo:$kmongoVersion")
-            implementation("org.litote.kmongo:kmongo-coroutine-serialization:$kmongoVersion")
-            implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
         }
     }
 }

@@ -1,5 +1,25 @@
-CREATE TABLE Receipts(
-id INTEGER NOT NULL PRIMARY KEY,
-name TEXT NOT NULL,
-AMOUNT INTEGER
+CREATE TABLE CacheReceipt(
+id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+concept TEXT NOT NULL,
+amount REAL NOT NULL
 );
+
+insertReceipt:
+INSERT INTO CacheReceipt(id,concept,amount)
+VALUES (?,?,?);
+
+retrieveReceipt:
+SELECT *
+FROM CacheReceipt;
+
+findReceiptByid:
+SELECT *
+FROM CacheReceipt
+WHERE id = ?;
+
+updateReceipt:
+INSERT INTO CacheReceipt(id,concept,amount)
+VALUES(id,?,?);
+
+deleteReceiptById:
+DELETE FROM CacheReceipt WHERE id = ?;

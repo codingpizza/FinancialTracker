@@ -11,7 +11,6 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.netty.*
 import kotlinx.serialization.json.Json
-import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 
 fun main(args: Array<String>) = EngineMain.main(args)
 
@@ -20,11 +19,7 @@ fun Application.module(testing: Boolean = false) {
     val receiptRepository = koin.get<ReceiptRepository>()
     val storeRepository = koin.get<ReceiptDtoStoreRepository>()
     install(ContentNegotiation) {
-        json(
-            Json {
-                serializersModule = IdKotlinXSerializationModule
-            }
-        )
+        json(Json)
     }
     registerReceiptRoutes(receiptRepository,storeRepository)
 }
