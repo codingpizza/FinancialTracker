@@ -1,16 +1,20 @@
 package com.codingpizza.financialtracker.di
 
 import com.codingpizza.financialtracker.db.FinancialTrackerDatabase
+import com.codingpizza.financialtracker.model.DatabaseConfigWrapper
 import com.codingpizza.financialtracker.repositories.ReceiptDtoStoreRepository
 import com.codingpizza.financialtracker.repositories.ReceiptRepository
 import com.codingpizza.financialtracker.repositories.ReceiptRepositoryImpl
 import com.squareup.sqldelight.db.SqlDriver
-import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
+import com.squareup.sqldelight.sqlite.driver.asJdbcDriver
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual fun platformModule(): Module = module {
-    single { provideSqlDelightDriver() }
+    single { provideHikariDatasource(databaseConfig = get()) }
+    single { provideSqlDelightDriver(hikariDataSource = get()) }
     single { provideSqlDelightDatabase(driver = get()) }
     single<ReceiptRepository> { ReceiptRepositoryImpl(database = get()) }
     single<ReceiptDtoStoreRepository> {
@@ -20,12 +24,20 @@ actual fun platformModule(): Module = module {
     }
 }
 
-
-private fun provideSqlDelightDriver(): SqlDriver {
-    val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-    FinancialTrackerDatabase.Schema.create(driver)
+private fun provideSqlDelightDriver(hikariDataSource: HikariDataSource): SqlDriver {
+    val driver: SqlDriver = hikariDataSource.asJdbcDriver()
+    FinancialTrackerDatabase.Schema.migrate(driver,0,1)
     return driver
 }
 
 private fun provideSqlDelightDatabase(driver: SqlDriver): FinancialTrackerDatabase =
     FinancialTrackerDatabase(driver)
+
+private fun provideHikariDatasource(databaseConfig: DatabaseConfigWrapper) : HikariDataSource{
+    val config = HikariConfig().apply {
+        jdbcUrl = databaseConfig.connection
+        username = databaseConfig.username
+        password = databaseConfig.password
+    }
+    return HikariDataSource(config)
+}

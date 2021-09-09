@@ -78,7 +78,15 @@ kotlin {
         sourceSets["jvmMain"].dependencies {
             implementation("io.ktor:ktor-client-apache:$ktorVersion")
             implementation("com.squareup.sqldelight:sqlite-driver:$sqlDelightVersion")
+            implementation("com.squareup.sqldelight:jdbc-driver:$sqlDelightVersion")
+            implementation("com.zaxxer:HikariCP:5.0.0")
+            // MySQL drivers
+            implementation("com.h2database:h2:1.4.200")
+            implementation("org.mariadb.jdbc:mariadb-java-client:2.7.3")
+            implementation("mysql:mysql-connector-java:8.0.25")
+            implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.3.2")
             implementation("org.slf4j:slf4j-simple:$slf4jVersion")
+            implementation("io.insert-koin:koin-ktor:${koinVersion}")
         }
     }
 }
@@ -91,6 +99,7 @@ sqldelight {
     database("FinancialTrackerDatabase") {
         packageName = "com.codingpizza.financialtracker.db"
         sourceFolders = listOf("sqldelight")
+        dialect = "mysql"
     }
 }
 

@@ -10,9 +10,11 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
-fun Route.receiptRouting(receiptRepository: ReceiptRepository,storeRepository: ReceiptDtoStoreRepository) {
+fun Route.receiptRouting(
+    receiptRepository: ReceiptRepository,
+    storeRepository: ReceiptDtoStoreRepository
+) {
     route("/receipt") {
-
         get {
             val receipts = receiptRepository.retrieveReceipts()
             if (receipts.isNotEmpty()) {

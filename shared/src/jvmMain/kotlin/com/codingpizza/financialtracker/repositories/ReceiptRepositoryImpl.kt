@@ -40,7 +40,7 @@ class ReceiptRepositoryImpl(
 
 
     override fun findById(id: String): Receipt? {
-        val cacheReceipt = database.financialTrackerQueries.findReceiptByid(id.toLong()).executeAsOneOrNull()
+        val cacheReceipt = database.financialTrackerQueries.findReceiptByid(id.toInt()).executeAsOneOrNull()
         return if (cacheReceipt != null) {
             Receipt(
                 id = cacheReceipt.id.toString(),
@@ -52,7 +52,7 @@ class ReceiptRepositoryImpl(
 
     override fun removeById(id: String): DeleteStatus {
         return runBlocking {
-            database.financialTrackerQueries.deleteReceiptById(id.toLong())
+            database.financialTrackerQueries.deleteReceiptById(id.toInt())
             DeleteStatus.Success // TODO Asegurarnos de que funcione la transaccion
         }
     }

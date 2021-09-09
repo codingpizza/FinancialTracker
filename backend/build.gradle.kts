@@ -22,6 +22,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("io.insert-koin:koin-core:${koinVersion}")
     implementation("io.insert-koin:koin-test:${koinVersion}")
+    implementation("io.insert-koin:koin-ktor:${koinVersion}")
 
 
     implementation(project(":shared"))
