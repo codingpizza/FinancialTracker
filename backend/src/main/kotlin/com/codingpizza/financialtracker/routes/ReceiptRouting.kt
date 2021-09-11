@@ -36,6 +36,17 @@ fun Route.receiptRouting(
             call.respond(receipt)
         }
 
+        patch("{id}") {
+            val id = call.parameters["id"] ?: return@patch call.respondText(
+                "Missing or malformed id",
+                status = HttpStatusCode.BadRequest
+            )
+            val receipt = call.receive<ReceiptDto>()
+            storeRepository.updateReceipt(id.toInt(),receipt)
+            call.respondText("Receipt stored correctly", status = HttpStatusCode.OK)
+
+        }
+
         post {
             val receipt = call.receive<ReceiptDto>()
             storeRepository.storeReceipt(receipt)

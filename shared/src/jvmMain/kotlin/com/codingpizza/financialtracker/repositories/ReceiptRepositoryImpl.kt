@@ -10,25 +10,29 @@ class ReceiptRepositoryImpl(
     private val database: FinancialTrackerDatabase
 ) : ReceiptRepository, ReceiptDtoStoreRepository {
 
-    override fun storeReceipt(receipt: ReceiptDto) {
-        runBlocking {
-            database.financialTrackerQueries.insertReceipt(
-                id = null,
-                concept = receipt.concept,
-                amount = receipt.amount
-            )
-        }
+    override fun storeReceipt(receipt: ReceiptDto) = runBlocking {
+        database.financialTrackerQueries.insertReceipt(
+            id = null,
+            concept = receipt.concept,
+            amount = receipt.amount
+        )
     }
 
-    override fun retrieveReceipts(): List<Receipt> {
-        return runBlocking {
-            val receipts = database.financialTrackerQueries.retrieveReceipt().executeAsList()
-            receipts.toReceipts()
-        }
+    override fun updateReceipt(id: Int, receipt: ReceiptDto) = runBlocking {
+        database.financialTrackerQueries.updateReceipt(
+            concept = receipt.concept,
+            amount = receipt.amount,
+            id = id
+        )
     }
 
-    private fun List<com.codingpizza.financialtracker.db.CacheReceipt>?.toReceipts(): List<Receipt> {
-        return if (isNullOrEmpty()) emptyList()
+    override fun retrieveReceipts(): List<Receipt> = runBlocking {
+        val receipts = database.financialTrackerQueries.retrieveReceipt().executeAsList()
+        receipts.toReceipts()
+    }
+
+    private fun List<com.codingpizza.financialtracker.db.CacheReceipt>?.toReceipts(): List<Receipt> =
+        if (isNullOrEmpty()) emptyList()
         else map { cacheReceipt ->
             Receipt(
                 id = cacheReceipt.id.toString(),
@@ -36,7 +40,6 @@ class ReceiptRepositoryImpl(
                 amount = cacheReceipt.amount
             )
         }
-    }
 
 
     override fun findById(id: String): Receipt? {

@@ -2,6 +2,7 @@ package com.codingpizza.financialtracker.data.remote
 
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.Result
+import com.codingpizza.financialtracker.model.dto.ReceiptDto
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -18,9 +19,9 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
 
     suspend fun storeReceipt(concept: String, amount: Double, currentReceiptId: String?): Result<Unit> {
         val requestBody = if (currentReceiptId == null) {
-            Receipt("", concept, amount)
+            ReceiptDto(concept, amount)
         } else {
-            Receipt(currentReceiptId, concept, amount)
+            ReceiptDto(concept, amount)
         }
         val result : HttpResponse = httpClient.post {
             url("${baseUrl}/receipt")

@@ -18,8 +18,10 @@ FROM CacheReceipt
 WHERE id = ?;
 
 updateReceipt:
-INSERT INTO CacheReceipt(id,concept,amount)
-VALUES(id,?,?);
+ UPDATE CacheReceipt
+ SET concept = :concept,
+     amount = :amount
+ WHERE id = :id;
 
 deleteReceiptById:
 DELETE FROM CacheReceipt WHERE id = ?;

@@ -6,4 +6,6 @@ interface ReceiptDtoStoreRepository {
 
     fun storeReceipt(receipt: ReceiptDto)
 
+    fun updateReceipt(id: Int, receipt: ReceiptDto)
+
 }
