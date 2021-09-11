@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                             val id = when (receiptClicked) {
                                 is ReceiptClickedState.ModifyReceiptState -> {
                                     val route =
-                                        Destinations.ReceiptScreen.createRoute(receiptClicked.id)
+                                        Destinations.ReceiptScreen.createRoute(receiptClicked.id.toString())
                                     Log.d("Route", "La ruta es: $route")
                                     route
                                 }

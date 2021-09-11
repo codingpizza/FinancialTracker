@@ -17,12 +17,8 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
     suspend fun retrieveAllReceipts(): List<Receipt> =
         httpClient.get { url("${baseUrl}/receipt") }
 
-    suspend fun storeReceipt(concept: String, amount: Double, currentReceiptId: String?): Result<Unit> {
-        val requestBody = if (currentReceiptId == null) {
-            ReceiptDto(concept, amount)
-        } else {
-            ReceiptDto(concept, amount)
-        }
+    suspend fun storeReceipt(concept: String, amount: Double): Result<Unit> {
+        val requestBody = ReceiptDto(concept, amount)
         val result : HttpResponse = httpClient.post {
             url("${baseUrl}/receipt")
             contentType(ContentType.Application.Json)
@@ -40,6 +36,20 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
         return if (result.status.isSuccess()) {
             val parsedResult : Receipt = Json.decodeFromString(string = result.readText())
             Result.Success(parsedResult)
+        } else {
+            Result.Error(result.status.description,result.status.value)
+        }
+    }
+
+    suspend fun updateReceipt(receipt: Receipt): Result<Unit> {
+        val receiptRequest = ReceiptDto(concept = receipt.concept, amount = receipt.amount)
+        val result : HttpResponse = httpClient.patch {
+            url("${baseUrl}/receipt/${receipt.id}")
+            contentType(ContentType.Application.Json)
+            body = receiptRequest
+        }
+        return if (result.status.isSuccess()) {
+            Result.Success(Unit)
         } else {
             Result.Error(result.status.description,result.status.value)
         }

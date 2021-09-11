@@ -35,7 +35,7 @@ class ReceiptRepositoryImpl(
         if (isNullOrEmpty()) emptyList()
         else map { cacheReceipt ->
             Receipt(
-                id = cacheReceipt.id.toString(),
+                id = cacheReceipt.id,
                 concept = cacheReceipt.concept,
                 amount = cacheReceipt.amount
             )
@@ -46,7 +46,7 @@ class ReceiptRepositoryImpl(
         val cacheReceipt = database.financialTrackerQueries.findReceiptByid(id.toInt()).executeAsOneOrNull()
         return if (cacheReceipt != null) {
             Receipt(
-                id = cacheReceipt.id.toString(),
+                id = cacheReceipt.id,
                 concept = cacheReceipt.concept,
                 amount = cacheReceipt.amount
             )

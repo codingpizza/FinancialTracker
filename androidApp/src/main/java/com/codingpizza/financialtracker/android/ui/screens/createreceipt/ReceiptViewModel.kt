@@ -19,7 +19,7 @@ class ReceiptViewModel(
 
     fun storeReceipt(concept: String, amount: Double, currentReceiptId: String?) {
         viewModelScope.launch(context = Dispatchers.IO) {
-            when (val result = receiptRepository.storeReceipt(concept, amount, currentReceiptId)) {
+            when (val result = receiptRepository.storeOrUpdateReceipt(concept, amount, currentReceiptId?.toIntOrNull())) {
                 is Result.Error -> _receiptScreenUiState.value = ReceiptUiState.Error(result.errorMessage)
                 is Result.Success -> _receiptScreenUiState.value = ReceiptUiState.Success
             }
