@@ -19,18 +19,17 @@ class ListViewModel(
     fun retrieveReceipts() {
         viewModelScope.launch {
             val data = receiptRepository.getAllReceipts()
-            Log.d("ListViewModel Updated","This ListViewModel Updated $data")
             _uiState.value = ListUiState.Success(receiptList = data)
         }
     }
 
     fun removeReceipt(removedReceipt: Receipt) {
-        Log.d("Updating List","Updating list")
+        viewModelScope.launch {
+            receiptRepository.deleteReceipt(removedReceipt)
+        }
         val previousList = (uiState.value as ListUiState.Success).receiptList
             .toMutableList()
-        Log.d("Updating List","Previous list $previousList")
         val updatedPreviousList = previousList.filter { it.id != removedReceipt.id }
-        Log.d("Updating List","Updating list new list $updatedPreviousList")
         _uiState.value = ListUiState.Success(updatedPreviousList)
     }
 

@@ -21,4 +21,8 @@ class ReceiptRepository(private val receiptApi: ReceiptApi) {
         receiptApi.updateReceipt(receipt)
 
     suspend fun getReceiptById(id: String): Result<Receipt> = receiptApi.retrieveReceiptById(id)
+
+    suspend fun deleteReceipt(removedReceipt: Receipt) {
+        receiptApi.deleteReceipt(removedReceipt)
+    }
 }

@@ -19,7 +19,7 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
 
     suspend fun storeReceipt(concept: String, amount: Double): Result<Unit> {
         val requestBody = ReceiptDto(concept, amount)
-        val result : HttpResponse = httpClient.post {
+        val result: HttpResponse = httpClient.post {
             url("${baseUrl}/receipt")
             contentType(ContentType.Application.Json)
             body = requestBody
@@ -27,23 +27,23 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
         return if (result.status.isSuccess()) {
             Result.Success(Unit)
         } else {
-            Result.Error(result.status.description,result.status.value)
+            Result.Error(result.status.description, result.status.value)
         }
     }
 
     suspend fun retrieveReceiptById(id: String): Result<Receipt> {
-        val result : HttpResponse = httpClient.get { url("${baseUrl}/receipt/${id}") }
+        val result: HttpResponse = httpClient.get { url("${baseUrl}/receipt/${id}") }
         return if (result.status.isSuccess()) {
-            val parsedResult : Receipt = Json.decodeFromString(string = result.readText())
+            val parsedResult: Receipt = Json.decodeFromString(string = result.readText())
             Result.Success(parsedResult)
         } else {
-            Result.Error(result.status.description,result.status.value)
+            Result.Error(result.status.description, result.status.value)
         }
     }
 
     suspend fun updateReceipt(receipt: Receipt): Result<Unit> {
         val receiptRequest = ReceiptDto(concept = receipt.concept, amount = receipt.amount)
-        val result : HttpResponse = httpClient.patch {
+        val result: HttpResponse = httpClient.patch {
             url("${baseUrl}/receipt/${receipt.id}")
             contentType(ContentType.Application.Json)
             body = receiptRequest
@@ -51,7 +51,17 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
         return if (result.status.isSuccess()) {
             Result.Success(Unit)
         } else {
-            Result.Error(result.status.description,result.status.value)
+            Result.Error(result.status.description, result.status.value)
+        }
+    }
+
+    suspend fun deleteReceipt(removedReceipt: Receipt): Result<Unit> {
+        val result: HttpResponse =
+            httpClient.delete { url("${baseUrl}/receipt/${removedReceipt.id}") }
+        return if (result.status.isSuccess()) {
+            Result.Success(Unit)
+        } else {
+            Result.Error(result.status.description, result.status.value)
         }
     }
 }
