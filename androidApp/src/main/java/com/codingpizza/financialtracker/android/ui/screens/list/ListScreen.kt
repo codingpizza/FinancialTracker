@@ -11,11 +11,10 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,47 +58,11 @@ private fun ReceiptList(
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
-            items(items = receiptList,
-                key = { item -> item.hashCode() }) { item ->
-                val state = rememberDismissState(
-                    confirmStateChange = {
-                        if (it == DismissValue.DismissedToStart) {
-                            Log.d("Items", "DismissValue $it")
-                            onItemRemoved(item)
-                        }
-                        true
-                    }
-                )
-                SwipeToDismiss(
-                    state = state,
-                    background = {
-                        val color = when (state.dismissDirection) {
-                            DismissDirection.StartToEnd -> Color.Transparent
-                            DismissDirection.EndToStart -> Color.Red
-                            null -> Color.Transparent
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color)
-                                .padding(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.align(Alignment.CenterEnd)
-                            )
-                        }
-
-                    },
-                    dismissContent = {
-                        ReceiptListItem(item) {
-                            onClick(it)
-                        }
-                    },
-                    directions = setOf(DismissDirection.EndToStart)
+            items(items = receiptList) { item ->
+                NewReceiptListItem(
+                    receipt = item,
+                    onReceiptClick = { onClick(ReceiptClickedState.ModifyReceiptState(item.id)) },
+                    onReceiptDeleted = onItemRemoved
                 )
             }
         }
@@ -113,12 +76,15 @@ private fun CreateReceiptFab(onClick: (ReceiptClickedState.NewReceiptState) -> U
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@ExperimentalMaterialApi
 @Composable
-fun ReceiptListItem(
+fun NewReceiptListItem(
     receipt: Receipt,
-    onReceiptClick: (ReceiptClickedState.ModifyReceiptState) -> Unit
+    onReceiptClick: (ReceiptClickedState.ModifyReceiptState) -> Unit,
+    onReceiptDeleted: (Receipt) -> Unit
 ) {
+    var expanded by remember { mutableStateOf(false) }
+
     ListItem(
         text = {
             Text(text = receipt.concept)
@@ -127,10 +93,17 @@ fun ReceiptListItem(
             Text(text = "${receipt.amount}$")
         },
         trailing = {
-            Icon(
-                imageVector = Icons.Outlined.KeyboardArrowRight,
-                contentDescription = null
-            )
+            IconButton(onClick = { expanded = true }) {
+                Icon(Icons.Default.MoreVert, contentDescription = "Delete item")
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(onClick = { onReceiptDeleted(receipt) }) {
+                    Text("Delete")
+                }
+            }
         },
         modifier = Modifier
             .fillMaxWidth()

@@ -29,7 +29,7 @@ class ListViewModel(
         val previousList = (uiState.value as ListUiState.Success).receiptList
             .toMutableList()
         Log.d("Updating List","Previous list $previousList")
-        val updatedPreviousList = previousList.filter { it.id == removedReceipt.id }
+        val updatedPreviousList = previousList.filter { it.id != removedReceipt.id }
         Log.d("Updating List","Updating list new list $updatedPreviousList")
         _uiState.value = ListUiState.Success(updatedPreviousList)
     }
