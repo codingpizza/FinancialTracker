@@ -14,6 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.android.ui.TopBar
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.koin.androidx.compose.getViewModel
 
 @ExperimentalMaterialApi
@@ -29,7 +31,16 @@ fun ListScreen(viewModel: ListViewModel = getViewModel(), onClick: (ReceiptClick
         is ListUiState.Success -> ReceiptList(
             receiptList = (state as ListUiState.Success).receiptList,
             onClick = onClick,
-            onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) }
+            onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
+            onRefresh = { viewModel.retrieveReceipts() },
+            isRefreshing = false
+        )
+        ListUiState.IsRefreshing -> ReceiptList(
+            receiptList = (state as ListUiState.Success).receiptList,
+            onClick = onClick,
+            onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
+            onRefresh = { viewModel.retrieveReceipts() },
+            isRefreshing = true
         )
     }
 }
@@ -39,22 +50,26 @@ fun ListScreen(viewModel: ListViewModel = getViewModel(), onClick: (ReceiptClick
 private fun ReceiptList(
     receiptList: List<Receipt>,
     onClick: (ReceiptClickedState) -> Unit,
-    onItemRemoved: (Receipt) -> Unit
+    onItemRemoved: (Receipt) -> Unit,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean
 ) {
     Scaffold(
         floatingActionButton = { CreateReceiptFab(onClick) },
         topBar = { TopBar(title = "Your Receipts") }) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
-            items(items = receiptList) { item ->
-                NewReceiptListItem(
-                    receipt = item,
-                    onReceiptClick = { onClick(ReceiptClickedState.ModifyReceiptState(item.id)) },
-                    onReceiptDeleted = onItemRemoved
-                )
+        SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing = isRefreshing), onRefresh = { onRefresh() }) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            ) {
+                items(items = receiptList) { item ->
+                    NewReceiptListItem(
+                        receipt = item,
+                        onReceiptClick = { onClick(ReceiptClickedState.ModifyReceiptState(item.id)) },
+                        onReceiptDeleted = onItemRemoved
+                    )
+                }
             }
         }
     }
