@@ -4,7 +4,7 @@ import com.codingpizza.financialtracker.data.remote.ReceiptApi
 
 class ReceiptRepository(private val receiptApi: ReceiptApi) {
 
-    suspend fun getAllReceipts(): List<Receipt> = receiptApi.retrieveAllReceipts()
+    suspend fun getAllReceipts(): Result<List<Receipt>> = receiptApi.retrieveAllReceipts()
 
     suspend fun storeOrUpdateReceipt(
         concept: String, amount: Double, currentReceiptId: Int?

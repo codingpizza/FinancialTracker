@@ -4,6 +4,7 @@ import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.Result
 import com.codingpizza.financialtracker.model.dto.ReceiptDto
 import io.ktor.client.*
+import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -14,8 +15,22 @@ import org.koin.core.component.KoinComponent
 class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
     private val baseUrl = "http://10.0.2.2:3000"
 
-    suspend fun retrieveAllReceipts(): List<Receipt> =
-        httpClient.get { url("${baseUrl}/receipt") }
+    suspend fun retrieveAllReceipts(): Result<List<Receipt>> {
+        val result  = runCatching<HttpResponse> {
+            httpClient.get { url("${baseUrl}/receipt") }
+        }
+        return result.fold(
+            onSuccess = { httpResponse ->
+                if (httpResponse.status.isSuccess()) {
+                    val parsedResult: List<Receipt> = Json.decodeFromString(string = httpResponse.readText())
+                    Result.Success(parsedResult)
+                } else {
+                    Result.Error(httpResponse.status.description, httpResponse.status.value)
+                }
+            },
+            onFailure = { Result.Error(it.message ?: "No error message was provided", 10000)}
+        )
+    }
 
     suspend fun storeReceipt(concept: String, amount: Double): Result<Unit> {
         val requestBody = ReceiptDto(concept, amount)

@@ -1,10 +1,10 @@
 package com.codingpizza.financialtracker.android.ui.screens.list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.ReceiptRepository
+import com.codingpizza.financialtracker.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,8 +18,11 @@ class ListViewModel(
 
     fun retrieveReceipts() {
         viewModelScope.launch {
-            val data = receiptRepository.getAllReceipts()
-            _uiState.value = ListUiState.Success(receiptList = data)
+            val result = receiptRepository.getAllReceipts()
+            _uiState.value = when (result) {
+                is Result.Error -> ListUiState.Error
+                is Result.Success -> ListUiState.Success(result.data)
+            }
         }
     }
 
