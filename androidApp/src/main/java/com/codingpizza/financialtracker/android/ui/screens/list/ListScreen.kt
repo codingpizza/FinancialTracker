@@ -1,5 +1,6 @@
 package com.codingpizza.financialtracker.android.ui.screens.list
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,7 +29,12 @@ import org.koin.androidx.compose.getViewModel
 fun ListScreen(viewModel: ListViewModel = getViewModel(), onClick: (ReceiptClickedState) -> Unit) {
     val state by viewModel.uiState.collectAsState()
     when (state) {
-        is ListUiState.Error -> { EmptyPatternContainer(state as ListUiState.Error) }
+        is ListUiState.Error -> {
+            EmptyPatternContainer(
+                title = (state as ListUiState.Error).mapErrorMessage(),
+                drawableId = R.drawable.errorimage
+            )
+        }
         ListUiState.Loading -> {
             viewModel.retrieveReceipts()
             CircularProgressIndicator()
@@ -62,20 +68,36 @@ private fun ReceiptList(
     Scaffold(
         floatingActionButton = { CreateReceiptFab(onClick) },
         topBar = { TopBar(title = "Your Receipts") }) {
-        SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing = isRefreshing), onRefresh = { onRefresh() }) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            ) {
-                items(items = receiptList) { item ->
-                    NewReceiptListItem(
-                        receipt = item,
-                        onReceiptClick = { onClick(ReceiptClickedState.ModifyReceiptState(item.id)) },
-                        onReceiptDeleted = onItemRemoved
-                    )
-                }
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+            onRefresh = { onRefresh() }) {
+            if (receiptList.isEmpty()) {
+                EmptyPatternContainer(title = "It's empty here. Create a new Receipt!",drawableId = R.drawable.emptypatternimage)
+            } else {
+                ListContent(receiptList, onClick, onItemRemoved)
             }
+        }
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+private fun ListContent(
+    receiptList: List<Receipt>,
+    onClick: (ReceiptClickedState) -> Unit,
+    onItemRemoved: (Receipt) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+    ) {
+        items(items = receiptList) { item ->
+            NewReceiptListItem(
+                receipt = item,
+                onReceiptClick = { onClick(ReceiptClickedState.ModifyReceiptState(item.id)) },
+                onReceiptDeleted = onItemRemoved
+            )
         }
     }
 }
@@ -126,19 +148,28 @@ fun NewReceiptListItem(
 }
 
 @Composable
-fun EmptyPatternContainer(error: ListUiState.Error) {
-    Box(modifier = Modifier.fillMaxSize(),contentAlignment = Alignment.Center) {
+fun EmptyPatternContainer(title: String, @DrawableRes drawableId : Int) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column {
             Image(
-                painter = painterResource(R.drawable.errorimage),
-                contentDescription = "description of the image",
+                painter = painterResource(drawableId),
+                contentDescription = "Empty pattern image",
             )
-            Text(text = error.mapErrorMessage(),modifier = Modifier.fillMaxWidth(),textAlign = TextAlign.Center)
+            Text(
+                text = "Illustration by Pixeltrue from Ouch!",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = title,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
 
-private fun ListUiState.Error.mapErrorMessage() : String {
+private fun ListUiState.Error.mapErrorMessage(): String {
     return when (errorCode) {
         ErrorCode.InternalError -> "An error has occurred."
         is ErrorCode.ServerError -> "We are having problems connecting with our servers, please try again later."
