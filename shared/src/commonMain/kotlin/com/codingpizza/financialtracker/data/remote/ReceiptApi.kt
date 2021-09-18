@@ -1,10 +1,10 @@
 package com.codingpizza.financialtracker.data.remote
 
+import com.codingpizza.financialtracker.ErrorCode
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.Result
 import com.codingpizza.financialtracker.model.dto.ReceiptDto
 import io.ktor.client.*
-import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -25,10 +25,10 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
                     val parsedResult: List<Receipt> = Json.decodeFromString(string = httpResponse.readText())
                     Result.Success(parsedResult)
                 } else {
-                    Result.Error(httpResponse.status.description, httpResponse.status.value)
+                    Result.Error(httpResponse.status.description, ErrorCode.ServerError(httpResponse.status.value))
                 }
             },
-            onFailure = { Result.Error(it.message ?: "No error message was provided", 10000)}
+            onFailure = { Result.Error(it.message ?: "No error message was provided", ErrorCode.InternalError)}
         )
     }
 
@@ -42,7 +42,7 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
         return if (result.status.isSuccess()) {
             Result.Success(Unit)
         } else {
-            Result.Error(result.status.description, result.status.value)
+            Result.Error(result.status.description, ErrorCode.ServerError(result.status.value))
         }
     }
 
@@ -52,7 +52,7 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
             val parsedResult: Receipt = Json.decodeFromString(string = result.readText())
             Result.Success(parsedResult)
         } else {
-            Result.Error(result.status.description, result.status.value)
+            Result.Error(result.status.description, ErrorCode.ServerError(result.status.value))
         }
     }
 
@@ -66,7 +66,7 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
         return if (result.status.isSuccess()) {
             Result.Success(Unit)
         } else {
-            Result.Error(result.status.description, result.status.value)
+            Result.Error(result.status.description, ErrorCode.ServerError(result.status.value))
         }
     }
 
@@ -76,7 +76,7 @@ class ReceiptApi(private val httpClient: HttpClient) : KoinComponent {
         return if (result.status.isSuccess()) {
             Result.Success(Unit)
         } else {
-            Result.Error(result.status.description, result.status.value)
+            Result.Error(result.status.description, ErrorCode.ServerError(result.status.value))
         }
     }
 }
