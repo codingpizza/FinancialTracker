@@ -1,9 +1,9 @@
 package com.codingpizza.financialtracker.android.ui.screens.list
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -11,8 +11,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import com.codingpizza.financialtracker.ErrorCode
 import com.codingpizza.financialtracker.Receipt
+import com.codingpizza.financialtracker.android.R
 import com.codingpizza.financialtracker.android.ui.TopBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -23,7 +28,7 @@ import org.koin.androidx.compose.getViewModel
 fun ListScreen(viewModel: ListViewModel = getViewModel(), onClick: (ReceiptClickedState) -> Unit) {
     val state by viewModel.uiState.collectAsState()
     when (state) {
-        ListUiState.Error -> Text(text = "Ha ocurrido un error")
+        is ListUiState.Error -> { EmptyPatternContainer(state as ListUiState.Error) }
         ListUiState.Loading -> {
             viewModel.retrieveReceipts()
             CircularProgressIndicator()
@@ -118,4 +123,24 @@ fun NewReceiptListItem(
                 onReceiptClick(ReceiptClickedState.ModifyReceiptState(receipt.id))
             }
     )
+}
+
+@Composable
+fun EmptyPatternContainer(error: ListUiState.Error) {
+    Box(modifier = Modifier.fillMaxSize(),contentAlignment = Alignment.Center) {
+        Column {
+            Image(
+                painter = painterResource(R.drawable.errorimage),
+                contentDescription = "description of the image",
+            )
+            Text(text = error.mapErrorMessage(),modifier = Modifier.fillMaxWidth(),textAlign = TextAlign.Center)
+        }
+    }
+}
+
+private fun ListUiState.Error.mapErrorMessage() : String {
+    return when (errorCode) {
+        ErrorCode.InternalError -> "An error has occurred."
+        is ErrorCode.ServerError -> "We are having problems connecting with our servers, please try again later."
+    }
 }

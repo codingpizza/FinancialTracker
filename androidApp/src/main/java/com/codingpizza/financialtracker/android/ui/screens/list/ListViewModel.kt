@@ -20,11 +20,12 @@ class ListViewModel(
         viewModelScope.launch {
             val result = receiptRepository.getAllReceipts()
             _uiState.value = when (result) {
-                is Result.Error -> ListUiState.Error
+                is Result.Error -> ListUiState.Error(result.errorCode)
                 is Result.Success -> ListUiState.Success(result.data)
             }
         }
     }
+
 
     fun removeReceipt(removedReceipt: Receipt) {
         viewModelScope.launch {
