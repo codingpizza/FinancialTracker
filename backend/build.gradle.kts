@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("kotlin-platform-jvm")
     application
+    id("com.github.johnrengelman.shadow") version "7.0.0"
     kotlin("plugin.serialization")
 }
 
@@ -36,6 +37,14 @@ tasks.withType<KotlinCompile> {
 
 tasks.create("stage") {
     dependsOn("installDist")
+}
+
+tasks{
+    shadowJar {
+        manifest {
+            attributes(Pair("Main-Class", "com.codingpizza.financialtracker.ServerKt"))
+        }
+    }
 }
 
 application {
