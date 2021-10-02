@@ -1,10 +1,12 @@
 package com.codingpizza.financialtracker.di
 
+import com.codingpizza.financialtracker.datasource.CacheReceiptDataSource
+import com.codingpizza.financialtracker.datasource.ReceiptLocalDataSource
 import com.codingpizza.financialtracker.db.FinancialTrackerDatabase
 import com.codingpizza.financialtracker.model.DatabaseConfigWrapper
 import com.codingpizza.financialtracker.repositories.ReceiptDtoStoreRepository
 import com.codingpizza.financialtracker.repositories.ReceiptRepository
-import com.codingpizza.financialtracker.repositories.ReceiptRepositoryImpl
+import com.codingpizza.financialtracker.repositories.server.ServerReceiptRepository
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.sqlite.driver.asJdbcDriver
 import com.zaxxer.hikari.HikariConfig
@@ -16,12 +18,7 @@ actual fun platformModule(): Module = module {
     single { provideHikariDatasource(databaseConfig = get()) }
     single { provideSqlDelightDriver(hikariDataSource = get()) }
     single { provideSqlDelightDatabase(driver = get()) }
-    single<ReceiptRepository> { ReceiptRepositoryImpl(database = get()) }
-    single<ReceiptDtoStoreRepository> {
-        ReceiptRepositoryImpl(
-            database = get()
-        )
-    }
+    single<ReceiptLocalDataSource> { CacheReceiptDataSource(database = get()) }
 }
 
 private fun provideSqlDelightDriver(hikariDataSource: HikariDataSource): SqlDriver {

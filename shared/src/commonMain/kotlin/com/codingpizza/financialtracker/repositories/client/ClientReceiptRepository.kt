@@ -1,8 +1,10 @@
-package com.codingpizza.financialtracker
+package com.codingpizza.financialtracker.repositories.client
 
+import com.codingpizza.financialtracker.Receipt
+import com.codingpizza.financialtracker.Result
 import com.codingpizza.financialtracker.data.remote.ReceiptApi
 
-class ReceiptRepository(private val receiptApi: ReceiptApi) {
+class ClientReceiptRepository(private val receiptApi: ReceiptApi) {
 
     suspend fun getAllReceipts(): Result<List<Receipt>> = receiptApi.retrieveAllReceipts()
 

@@ -3,14 +3,14 @@ package com.codingpizza.financialtracker.android.ui.screens.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codingpizza.financialtracker.Receipt
-import com.codingpizza.financialtracker.ReceiptRepository
+import com.codingpizza.financialtracker.repositories.client.ClientReceiptRepository
 import com.codingpizza.financialtracker.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ListViewModel(
-    private val receiptRepository: ReceiptRepository
+    private val clientReceiptRepository: ClientReceiptRepository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ListUiState> = MutableStateFlow(ListUiState.Loading)
@@ -18,7 +18,7 @@ class ListViewModel(
 
     fun retrieveReceipts() {
         viewModelScope.launch {
-            val result = receiptRepository.getAllReceipts()
+            val result = clientReceiptRepository.getAllReceipts()
             _uiState.value = when (result) {
                 is Result.Error -> ListUiState.Error(result.errorCode)
                 is Result.Success -> ListUiState.Success(result.data)
@@ -29,7 +29,7 @@ class ListViewModel(
 
     fun removeReceipt(removedReceipt: Receipt) {
         viewModelScope.launch {
-            receiptRepository.deleteReceipt(removedReceipt)
+            clientReceiptRepository.deleteReceipt(removedReceipt)
         }
         val previousList = (uiState.value as ListUiState.Success).receiptList
             .toMutableList()

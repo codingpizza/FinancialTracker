@@ -1,11 +1,13 @@
-package com.codingpizza.financialtracker.repositories
+package com.codingpizza.financialtracker.repositories.server
 
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.datasource.ReceiptLocalDataSource
 import com.codingpizza.financialtracker.model.DeleteStatus
 import com.codingpizza.financialtracker.model.dto.ReceiptDto
+import com.codingpizza.financialtracker.repositories.ReceiptDtoStoreRepository
+import com.codingpizza.financialtracker.repositories.ReceiptRepository
 
-class ReceiptRepositoryImpl(
+class ServerReceiptRepository(
     private val localDatasource: ReceiptLocalDataSource
 ) : ReceiptRepository, ReceiptDtoStoreRepository {
 
