@@ -4,6 +4,13 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
     }
+    resolutionStrategy {
+        eachPlugin {
+            if(requested.id.id.toString().startsWith("com.google.cloud.tools.appengine")) {
+                useModule("com.google.cloud.tools:appengine-gradle-plugin:${requested.version}")
+            }
+        }
+    }
 }
 
 rootProject.name = "FinancialTracker"
