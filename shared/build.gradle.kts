@@ -111,3 +111,5 @@ android {
         targetSdkVersion(30)
     }
 }
+
+Caused by: java.lang.ClassCastException: class com.google.cloud.sql.mysql.SocketFactory cannot be cast to class javax.net.SocketFactory (com.google.cloud.sql.mysql.SocketFactory is in unnamed module of loader 'app'; javax.net.SocketFactory is in module java.base of loader 'bootstrap')
