@@ -30,7 +30,7 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
     }
     val ktorVersion = "1.6.1"
-    val sqlDelightVersion = "1.5.0"
+    val sqlDelightVersion = "1.5.2"
     val slf4jVersion = "1.7.30"
     val kotlinxSerialization = "1.2.1"
     val koinVersion = "3.1.2"
@@ -82,9 +82,9 @@ kotlin {
             implementation("com.zaxxer:HikariCP:5.0.0")
             // MySQL drivers
             implementation("com.h2database:h2:1.4.200")
-            implementation("org.mariadb.jdbc:mariadb-java-client:2.7.3")
-            implementation("mysql:mysql-connector-java:8.0.25")
-            implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.3.2")
+            implementation("org.mariadb.jdbc:mariadb-java-client:2.7.4")
+            implementation("mysql:mysql-connector-java:8.0.27")
+            implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.3.4")
             implementation("org.slf4j:slf4j-simple:$slf4jVersion")
             implementation("io.insert-koin:koin-ktor:${koinVersion}")
         }
