@@ -1,0 +1,27 @@
+CREATE TABLE CacheReceipt(
+id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+concept TEXT NOT NULL,
+amount REAL NOT NULL
+);
+
+insertReceipt:
+INSERT INTO CacheReceipt(id,concept,amount)
+VALUES (?,?,?);
+
+retrieveReceipt:
+SELECT *
+FROM CacheReceipt;
+
+findReceiptByid:
+SELECT *
+FROM CacheReceipt
+WHERE id = ?;
+
+updateReceipt:
+ UPDATE CacheReceipt
+ SET concept = :concept,
+     amount = :amount
+ WHERE id = :id;
+
+deleteReceiptById:
+DELETE FROM CacheReceipt WHERE id = ?;

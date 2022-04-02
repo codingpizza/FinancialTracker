@@ -5,6 +5,7 @@ import com.codingpizza.financialtracker.routes.receiptRouting
 import com.codingpizza.financialtracker.repositories.ReceiptRepository
 import com.codingpizza.financialtracker.model.DatabaseConfigWrapper
 import com.codingpizza.financialtracker.di.platformModule
+import com.codingpizza.financialtracker.di.serverModule
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.response.*
@@ -17,8 +18,7 @@ import org.koin.ktor.ext.inject
 fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module(testing: Boolean = false) {
-    val ktorModule = org.koin.dsl.module { single { obtainDatabaseConfig() } }
-    install(org.koin.ktor.ext.Koin) { modules(ktorModule,platformModule()) }
+    install(org.koin.ktor.ext.Koin) { modules(backendModule(), serverModule) }
     val receiptRepository : ReceiptRepository by inject()
     val storeRepository : ReceiptDtoStoreRepository by inject()
 
@@ -42,11 +42,11 @@ fun Application.registerReceiptRoutes(
     }
 }
 
-fun Application.obtainDatabaseConfig() : DatabaseConfigWrapper {
-    val applicationConfig = environment.config.config("database")
-    return DatabaseConfigWrapper(
-        connection = applicationConfig.property("connection").getString(),
-        username = applicationConfig.propertyOrNull("username")?.getString(),
-        password = applicationConfig.propertyOrNull("password")?.getString(),
-    )
-}
+//fun Application.obtainDatabaseConfig() : DatabaseConfigWrapper {
+//    val applicationConfig = environment.config.config("database")
+//    return DatabaseConfigWrapper(
+//        connection = applicationConfig.property("connection").getString(),
+//        username = applicationConfig.propertyOrNull("username")?.getString(),
+//        password = applicationConfig.propertyOrNull("password")?.getString(),
+//    )
+//}
