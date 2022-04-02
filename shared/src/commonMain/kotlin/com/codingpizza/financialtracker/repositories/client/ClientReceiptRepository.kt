@@ -2,11 +2,11 @@ package com.codingpizza.financialtracker.repositories.client
 
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.Result
-import com.codingpizza.financialtracker.data.remote.ReceiptApi
+import com.codingpizza.financialtracker.datasource.remote.ReceiptDataSource
 
-class ClientReceiptRepository(private val receiptApi: ReceiptApi) {
+class ClientReceiptRepository(private val receiptDataSouce : ReceiptDataSource) {
 
-    suspend fun getAllReceipts(): Result<List<Receipt>> = receiptApi.retrieveAllReceipts()
+    suspend fun getAllReceipts(): Result<List<Receipt>> = receiptDataSouce.retrieveAllReceipts()
 
     suspend fun storeOrUpdateReceipt(
         concept: String, amount: Double, currentReceiptId: Int?
@@ -17,14 +17,14 @@ class ClientReceiptRepository(private val receiptApi: ReceiptApi) {
     }
 
     suspend fun storeReceipt(concept: String, amount: Double): Result<Unit> =
-        receiptApi.storeReceipt(concept, amount)
+        receiptDataSouce.storeReceipt(concept, amount)
 
     suspend fun updateReceipt(receipt: Receipt): Result<Unit> =
-        receiptApi.updateReceipt(receipt)
+        receiptDataSouce.updateReceipt(receipt)
 
-    suspend fun getReceiptById(id: String): Result<Receipt> = receiptApi.retrieveReceiptById(id)
+    suspend fun getReceiptById(id: String): Result<Receipt> = receiptDataSouce.retrieveReceiptById(id)
 
     suspend fun deleteReceipt(removedReceipt: Receipt) {
-        receiptApi.deleteReceipt(removedReceipt)
+        receiptDataSouce.deleteReceipt(removedReceipt)
     }
 }

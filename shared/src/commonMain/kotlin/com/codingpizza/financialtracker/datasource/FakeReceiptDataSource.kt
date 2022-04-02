@@ -4,7 +4,7 @@ import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.model.DeleteStatus
 import com.codingpizza.financialtracker.model.dto.ReceiptDto
 
-class FakeReceiptDataSource : ReceiptLocalDataSource {
+open class FakeReceiptDataSource : ReceiptLocalDataSource {
     private val inMemoryDatabase = mutableListOf<Receipt>()
 
     override fun storeReceipt(receipt: ReceiptDto) {

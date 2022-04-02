@@ -18,11 +18,11 @@ sqldelight {
 }
 
 dependencies {
-    val kotlinxSerialization = "1.2.1"
-    val coroutinesVersion = "1.5.0"
-    val ktorVersion = "1.6.7"
-    val logbackVersion = "1.2.3"
-    val koinVersion = "3.1.2"
+    val kotlinxSerialization = "1.3.2"
+    val coroutinesVersion = "1.6.0"
+    val ktorVersion = "1.6.8"
+    val logbackVersion = "1.2.11"
+    val koinVersion = "3.1.5"
     val sqlDelightVersion = "1.5.3"
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerialization")
@@ -40,9 +40,9 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
     // MySQL drivers
     implementation("com.h2database:h2:2.1.210")
-    implementation("org.mariadb.jdbc:mariadb-java-client:2.7.4")
-    implementation("mysql:mysql-connector-java:8.0.27")
-    implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.4.1")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.0.3")
+    implementation("mysql:mysql-connector-java:8.0.28")
+    implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.4.4")
 
 
 

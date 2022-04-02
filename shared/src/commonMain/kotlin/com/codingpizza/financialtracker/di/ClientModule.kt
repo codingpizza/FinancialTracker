@@ -1,6 +1,8 @@
 package com.codingpizza.financialtracker.di
 
 import com.codingpizza.financialtracker.data.remote.ReceiptApi
+import com.codingpizza.financialtracker.datasource.remote.FakeReceiptDataSource
+import com.codingpizza.financialtracker.datasource.remote.ReceiptDataSource
 import com.codingpizza.financialtracker.repositories.client.ClientReceiptRepository
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -14,8 +16,9 @@ import org.koin.dsl.module
 fun clientModule(enableNetworkLogs: Boolean) = module {
     single { createJson() }
     single { createHttpClient(json = get(), enableNetworkLogs = enableNetworkLogs) }
-    single { ClientReceiptRepository(receiptApi = get()) }
+    single { ClientReceiptRepository(receiptDataSouce = get()) }
     single { ReceiptApi(httpClient = get()) }
+    single<ReceiptDataSource> { FakeReceiptDataSource() }
 }
 
 fun createJson() = Json {

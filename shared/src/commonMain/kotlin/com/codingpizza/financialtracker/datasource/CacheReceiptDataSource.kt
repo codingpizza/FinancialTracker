@@ -52,6 +52,6 @@ class CacheReceiptDataSource(
 
     override fun removeById(id: String): DeleteStatus {
         database.financialTrackerQueries.deleteReceiptById(id.toInt())
-        return DeleteStatus.Success // TODO Asegurarnos de que funcione la transaccion
+        return DeleteStatus.Success
     }
 }
