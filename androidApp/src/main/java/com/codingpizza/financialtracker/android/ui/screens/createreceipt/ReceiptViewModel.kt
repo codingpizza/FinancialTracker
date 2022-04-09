@@ -1,5 +1,6 @@
 package com.codingpizza.financialtracker.android.ui.screens.createreceipt
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codingpizza.financialtracker.repositories.client.ClientReceiptRepository
@@ -21,7 +22,7 @@ class ReceiptViewModel(
         viewModelScope.launch(context = Dispatchers.IO) {
             when (val result = clientReceiptRepository.storeOrUpdateReceipt(concept, amount, currentReceiptId?.toIntOrNull())) {
                 is Result.Error -> _receiptScreenUiState.value = ReceiptUiState.Error(result.errorMessage)
-                is Result.Success -> _receiptScreenUiState.value = ReceiptUiState.Success
+                is Result.Success -> _receiptScreenUiState.value = ReceiptUiState.SuccessStoringReceipt
             }
         }
     }
@@ -36,10 +37,20 @@ class ReceiptViewModel(
     }
 
     fun initialize(receiptId: String?) {
-        receiptId?.let {
+        Log.d("receiptId","receiptId $receiptId")
+        if (receiptId == null) {
+            osito()
+        } else {
             _receiptScreenUiState.value = ReceiptUiState.Loading
-            retrieveReceipt(it)
+            retrieveReceipt(receiptId)
         }
+    }
+
+    /***
+     * Nombre de funcion reclamado con puntos del canal.
+     */
+    private fun osito() {
+        _receiptScreenUiState.value = ReceiptUiState.Idle
     }
 
 }

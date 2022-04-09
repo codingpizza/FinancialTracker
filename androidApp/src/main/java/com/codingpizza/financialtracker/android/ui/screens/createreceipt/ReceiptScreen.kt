@@ -1,5 +1,6 @@
 package com.codingpizza.financialtracker.android.ui.screens.createreceipt
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -12,49 +13,51 @@ import com.codingpizza.financialtracker.android.ui.TopBar
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun ReceiptScreen(
+fun receiptScreen(
     viewModel: ReceiptViewModel = getViewModel(),
     receiptId: String?) {
     val state by viewModel.receiptScreenUiState.collectAsState()
     when (state) {
-        ReceiptUiState.Idle -> viewModel.initialize(receiptId)
-        ReceiptUiState.Loading -> CenteredLoading()
-        else -> ReceiptContainer(uiState = state, currentReceiptId = receiptId) { concept, amount,currentId  ->
-            viewModel.storeReceipt(concept,amount.toDouble(),currentId)
-        }
+        ReceiptUiState.Loading -> centeredLoading()
+        else -> receiptContainer(uiState = state,
+            currentReceiptId = receiptId,
+            onClick = { concept, amount, currentId  -> viewModel.storeReceipt(concept,amount.toDouble(),currentId) },
+            onReceiptRequest = { id -> viewModel.initialize(id) }
+        )
     }
 }
 
 @Composable
-private fun ReceiptContainer(
+private fun receiptContainer(
     uiState: ReceiptUiState,
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     currentReceiptId: String? = null,
     onClick: (String, Float, String?) -> Unit,
+    onReceiptRequest: (String) -> Unit
 ) {
-    val conceptNameByState = when (uiState) {
-        is ReceiptUiState.SuccessRetrievingReceipt -> uiState.receipt.concept
-        ReceiptUiState.Success -> ""
-        else -> ""
-    }
-    val conceptAmountByState = when (uiState) {
-        is ReceiptUiState.SuccessRetrievingReceipt -> uiState.receipt.amount.toString()
-        ReceiptUiState.Success -> ""
-        else -> ""
-    }
-    var conceptName by remember { mutableStateOf(conceptNameByState) }
-    var currentAmount by remember { mutableStateOf(conceptAmountByState) }
+    var conceptName by remember { mutableStateOf("") }
+    var currentAmount by remember { mutableStateOf("") }
 
     when (uiState) {
         is ReceiptUiState.Error -> {
-            LaunchSnackbarEffect(scaffoldState, uiState.errorMessage)
+            launchSnackbarEffect(scaffoldState, uiState.errorMessage)
         }
-        ReceiptUiState.Success -> {
-            LaunchSnackbarEffect(scaffoldState, "Receipt Stored Successfully")
+        ReceiptUiState.SuccessStoringReceipt -> {
+            conceptName = ""
+            currentAmount = ""
+            launchSnackbarEffect(scaffoldState, "Receipt Stored Successfully")
         }
-        ReceiptUiState.Idle, ReceiptUiState.Loading -> {
+        ReceiptUiState.Idle -> {
+            currentReceiptId?.let {
+                onReceiptRequest(it)
+            }
+        }
+        ReceiptUiState.Loading -> {
+            //no-op
         }
         is ReceiptUiState.SuccessRetrievingReceipt -> {
+            conceptName = uiState.receipt.concept
+            currentAmount = uiState.receipt.amount.toString()
         }
     }
 
@@ -98,7 +101,7 @@ private fun ReceiptContainer(
 }
 
 @Composable
-private fun LaunchSnackbarEffect(scaffoldState: ScaffoldState, message: String) {
+private fun launchSnackbarEffect(scaffoldState: ScaffoldState, message: String) {
     LaunchedEffect(scaffoldState.snackbarHostState) {
         scaffoldState.snackbarHostState.showSnackbar(message = message)
     }
@@ -106,7 +109,7 @@ private fun LaunchSnackbarEffect(scaffoldState: ScaffoldState, message: String) 
 
 
 @Composable
-fun CenteredLoading() {
+fun centeredLoading() {
     Box {
         CircularProgressIndicator(
             modifier = Modifier.align(Alignment.Center)

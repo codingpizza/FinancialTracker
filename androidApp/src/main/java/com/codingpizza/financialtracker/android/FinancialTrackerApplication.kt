@@ -11,7 +11,6 @@ class FinancialTrackerApplication : Application() {
         super.onCreate()
 
         initKoin {
-            androidLogger()
             androidContext(this@FinancialTrackerApplication)
             modules(appModule)
         }
