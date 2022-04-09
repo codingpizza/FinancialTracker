@@ -9,8 +9,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.codingpizza.financialtracker.android.navigation.Destinations
-import com.codingpizza.financialtracker.android.ui.screens.createreceipt.ReceiptScreen
+import com.codingpizza.financialtracker.android.ui.screens.createreceipt.receiptScreen
 import com.codingpizza.financialtracker.android.ui.screens.list.ListScreen
 import com.codingpizza.financialtracker.android.ui.screens.list.ReceiptClickedState
 
@@ -44,10 +45,15 @@ class MainActivity : AppCompatActivity() {
                             navController.navigate(route = id)
                         }
                     }
-                    composable(route = Destinations.ReceiptScreen.route) { backStackEntry ->
+                    composable(
+                        route = Destinations.ReceiptScreen.route,
+                        arguments = listOf(navArgument("receiptId") {
+                            nullable = true
+                        })
+                    ) { backStackEntry ->
                         val id = backStackEntry.arguments?.getString("receiptId")
-                        Log.d("Route","Id disponible: $id")
-                        ReceiptScreen(receiptId = id)
+                        Log.d("Route", "Id disponible: $id")
+                        receiptScreen(receiptId = id)
                     }
                 }
             }
