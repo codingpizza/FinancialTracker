@@ -18,9 +18,9 @@ class ReceiptViewModel(
         MutableStateFlow(ReceiptUiState.Idle)
     val receiptScreenUiState: StateFlow<ReceiptUiState> = _receiptScreenUiState
 
-    fun storeReceipt(concept: String, amount: Double, currentReceiptId: String?) {
+    fun storeReceipt(formData: ReceiptFormData) {
         viewModelScope.launch(context = Dispatchers.IO) {
-            when (val result = clientReceiptRepository.storeOrUpdateReceipt(concept, amount, currentReceiptId?.toIntOrNull())) {
+            when (val result = clientReceiptRepository.storeOrUpdateReceipt(formData.conceptName, formData.amount, formData.currentReceiptId?.toIntOrNull())) {
                 is Result.Error -> _receiptScreenUiState.value = ReceiptUiState.Error(result.errorMessage)
                 is Result.Success -> _receiptScreenUiState.value = ReceiptUiState.SuccessStoringReceipt
             }

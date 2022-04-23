@@ -1,6 +1,5 @@
 package com.codingpizza.financialtracker.android.ui.screens.createreceipt
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -21,7 +20,7 @@ fun receiptScreen(
         ReceiptUiState.Loading -> centeredLoading()
         else -> receiptContainer(uiState = state,
             currentReceiptId = receiptId,
-            onClick = { concept, amount, currentId  -> viewModel.storeReceipt(concept,amount.toDouble(),currentId) },
+            onClick = { receiptFormData  -> viewModel.storeReceipt(receiptFormData) },
             onReceiptRequest = { id -> viewModel.initialize(id) }
         )
     }
@@ -32,7 +31,7 @@ private fun receiptContainer(
     uiState: ReceiptUiState,
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     currentReceiptId: String? = null,
-    onClick: (String, Float, String?) -> Unit,
+    onClick: (ReceiptFormData) -> Unit,
     onReceiptRequest: (String) -> Unit
 ) {
     var conceptName by remember { mutableStateOf("") }
@@ -88,7 +87,7 @@ private fun receiptContainer(
                 )
             }
             Button(
-                onClick = { onClick(conceptName, currentAmount.toFloat(), currentReceiptId) },
+                onClick = { onClick(ReceiptFormData(conceptName, currentAmount.toDouble(), currentReceiptId)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
