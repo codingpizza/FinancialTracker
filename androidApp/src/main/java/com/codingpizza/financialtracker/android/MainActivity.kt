@@ -33,12 +33,10 @@ class MainActivity : AppCompatActivity() {
                                 is ReceiptClickedState.ModifyReceiptState -> {
                                     val route =
                                         Destinations.ReceiptScreen.createRoute(receiptClicked.id.toString())
-                                    Log.d("Route", "La ruta es: $route")
                                     route
                                 }
                                 ReceiptClickedState.NewReceiptState -> {
                                     val route = Destinations.ReceiptScreen.route
-                                    Log.d("Route", "La ruta es: $route")
                                     route
                                 }
                             }
@@ -52,7 +50,6 @@ class MainActivity : AppCompatActivity() {
                         })
                     ) { backStackEntry ->
                         val id = backStackEntry.arguments?.getString("receiptId")
-                        Log.d("Route", "Id disponible: $id")
                         receiptScreen(receiptId = id)
                     }
                 }

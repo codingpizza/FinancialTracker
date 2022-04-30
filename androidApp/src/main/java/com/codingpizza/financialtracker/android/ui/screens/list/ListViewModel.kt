@@ -1,5 +1,6 @@
 package com.codingpizza.financialtracker.android.ui.screens.list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codingpizza.financialtracker.Receipt
@@ -7,6 +8,7 @@ import com.codingpizza.financialtracker.repositories.client.ClientReceiptReposit
 import com.codingpizza.financialtracker.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ListViewModel(
@@ -28,13 +30,35 @@ class ListViewModel(
 
 
     fun removeReceipt(removedReceipt: Receipt) {
+        Log.d("Composable ViewModel","removed receipt $removedReceipt")
         viewModelScope.launch {
             clientReceiptRepository.deleteReceipt(removedReceipt)
+            _uiState.update { previousState ->
+                Log.d("Composable ViewModel","Updating value...")
+                val listWithoutReceipt = updateList(previousState,removedReceipt)
+                ListUiState.UpdateSuccessful(listWithoutReceipt)
+            }
+            Log.d("Composable ViewModel","Post state value ${_uiState.value}")
         }
-        val previousList = (uiState.value as ListUiState.Success).receiptList
-            .toMutableList()
-        val updatedPreviousList = previousList.filter { it.id != removedReceipt.id }
-        _uiState.value = ListUiState.Success(updatedPreviousList)
+
+    }
+
+    private fun updateList(previousState: ListUiState, removedReceipt: Receipt): List<Receipt> {
+        val previousList = when (previousState) {
+            is ListUiState.Success -> {
+                Log.d("Composable ViewModel","Previous List Success ${previousState.receiptList}")
+                previousState.receiptList
+            }
+            is ListUiState.UpdateSuccessful -> {
+                Log.d("Composable ViewModel","Previous List UpdateSuccessful ${previousState.updatedList}")
+                previousState.updatedList
+            }
+            else -> {
+                Log.d("Composable ViewModel","Previous List else")
+                emptyList()
+            }
+        }
+        return previousList.toMutableList().minus(removedReceipt)
     }
 
 }

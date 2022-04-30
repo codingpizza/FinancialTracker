@@ -6,7 +6,13 @@ import com.codingpizza.financialtracker.Result
 
 class FakeReceiptDataSource : ReceiptDataSource {
 
-    private val storedReceipts = mutableListOf<Receipt>()
+    private val storedReceipts = mutableListOf(
+        Receipt(0,"Subway",22.0),
+        Receipt(1,"Mcdonalds",22.0),
+        Receipt(2,"Burger King",22.0),
+        Receipt(3,"100 Montaditos",22.0),
+        Receipt(4,"KFC",22.0),
+    )
 
     override suspend fun retrieveAllReceipts(): Result<List<Receipt>> = Result.Success<List<Receipt>>(storedReceipts)
 

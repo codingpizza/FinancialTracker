@@ -1,5 +1,6 @@
 package com.codingpizza.financialtracker.android.ui.screens.list
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,20 +40,33 @@ fun ListScreen(viewModel: ListViewModel = getViewModel(), onClick: (ReceiptClick
             viewModel.retrieveReceipts()
             CircularProgressIndicator()
         }
-        is ListUiState.Success -> ReceiptList(
-            receiptList = (state as ListUiState.Success).receiptList,
-            onClick = onClick,
-            onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
-            onRefresh = { viewModel.retrieveReceipts() },
-            isRefreshing = false
-        )
-        ListUiState.IsRefreshing -> ReceiptList(
-            receiptList = (state as ListUiState.Success).receiptList,
-            onClick = onClick,
-            onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
-            onRefresh = { viewModel.retrieveReceipts() },
-            isRefreshing = true
-        )
+        is ListUiState.Success -> {
+            ReceiptList(
+                receiptList = (state as ListUiState.Success).receiptList,
+                onClick = onClick,
+                onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
+                onRefresh = { viewModel.retrieveReceipts() },
+                isRefreshing = false
+            )
+        }
+        ListUiState.IsRefreshing -> {
+            ReceiptList(
+                receiptList = (state as ListUiState.Success).receiptList,
+                onClick = onClick,
+                onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
+                onRefresh = { viewModel.retrieveReceipts() },
+                isRefreshing = true
+            )
+        }
+        is ListUiState.UpdateSuccessful -> {
+            ReceiptList(
+                receiptList = (state as ListUiState.UpdateSuccessful).updatedList,
+                onClick = onClick,
+                onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
+                onRefresh = { viewModel.retrieveReceipts() },
+                isRefreshing = false
+            )
+        }
     }
 }
 
@@ -70,7 +84,10 @@ private fun ReceiptList(
         topBar = { TopBar(title = "Your Receipts") }) {
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-            onRefresh = { onRefresh() }) {
+            onRefresh = {
+                Log.d("Composable List Screen","OnRefresh $isRefreshing")
+                onRefresh()
+            }) {
             if (receiptList.isEmpty()) {
                 EmptyPatternContainer(title = "It's empty here. Create a new Receipt!",drawableId = R.drawable.emptypatternimage)
             } else {
@@ -133,7 +150,11 @@ fun NewReceiptListItem(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                DropdownMenuItem(onClick = { onReceiptDeleted(receipt) }) {
+                DropdownMenuItem(onClick = {
+                    Log.d("Composable List Screen","Delete clicked $receipt")
+                    expanded = false
+                    onReceiptDeleted(receipt)
+                }) {
                     Text("Delete")
                 }
             }
