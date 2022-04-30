@@ -7,6 +7,6 @@ sealed class ListUiState {
     object Loading : ListUiState()
     data class Error(val errorCode: ErrorCode) : ListUiState()
     data class Success(val receiptList: List<Receipt>) : ListUiState()
-    object IsRefreshing : ListUiState()
+    data class IsRefreshing(val updatedList: List<Receipt>) : ListUiState()
     data class UpdateSuccessful(val updatedList: List<Receipt>) : ListUiState()
 }

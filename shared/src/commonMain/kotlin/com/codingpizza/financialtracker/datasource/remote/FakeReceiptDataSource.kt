@@ -3,6 +3,7 @@ package com.codingpizza.financialtracker.datasource.remote
 import com.codingpizza.financialtracker.ErrorCode
 import com.codingpizza.financialtracker.Receipt
 import com.codingpizza.financialtracker.Result
+import kotlinx.coroutines.delay
 
 class FakeReceiptDataSource : ReceiptDataSource {
 

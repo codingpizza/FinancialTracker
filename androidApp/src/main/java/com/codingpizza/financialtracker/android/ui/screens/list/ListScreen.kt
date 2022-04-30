@@ -29,6 +29,8 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun ListScreen(viewModel: ListViewModel = getViewModel(), onClick: (ReceiptClickedState) -> Unit) {
     val state by viewModel.uiState.collectAsState()
+    val onRefresh = { viewModel.updateReceipts() }
+    val onItemRemoved: (Receipt) -> Unit = { removedReceipt -> viewModel.removeReceipt(removedReceipt) }
     when (state) {
         is ListUiState.Error -> {
             EmptyPatternContainer(
@@ -44,17 +46,17 @@ fun ListScreen(viewModel: ListViewModel = getViewModel(), onClick: (ReceiptClick
             ReceiptList(
                 receiptList = (state as ListUiState.Success).receiptList,
                 onClick = onClick,
-                onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
-                onRefresh = { viewModel.retrieveReceipts() },
+                onItemRemoved = onItemRemoved,
+                onRefresh = onRefresh,
                 isRefreshing = false
             )
         }
-        ListUiState.IsRefreshing -> {
+        is ListUiState.IsRefreshing -> {
             ReceiptList(
-                receiptList = (state as ListUiState.Success).receiptList,
+                receiptList = (state as ListUiState.IsRefreshing).updatedList,
                 onClick = onClick,
-                onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
-                onRefresh = { viewModel.retrieveReceipts() },
+                onItemRemoved = onItemRemoved,
+                onRefresh = { },
                 isRefreshing = true
             )
         }
@@ -62,11 +64,13 @@ fun ListScreen(viewModel: ListViewModel = getViewModel(), onClick: (ReceiptClick
             ReceiptList(
                 receiptList = (state as ListUiState.UpdateSuccessful).updatedList,
                 onClick = onClick,
-                onItemRemoved = { removedReceipt -> viewModel.removeReceipt(removedReceipt) },
-                onRefresh = { viewModel.retrieveReceipts() },
+                onItemRemoved = onItemRemoved,
+                onRefresh = onRefresh,
                 isRefreshing = false
             )
         }
+    }.also {
+        Log.d("State","State $state")
     }
 }
 

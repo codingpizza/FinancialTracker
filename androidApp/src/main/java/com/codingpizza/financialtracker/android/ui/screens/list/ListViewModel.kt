@@ -19,11 +19,7 @@ class ListViewModel(
 
     fun retrieveReceipts() {
         viewModelScope.launch {
-            val result = clientReceiptRepository.getAllReceipts()
-            _uiState.value = when (result) {
-                is Result.Error -> ListUiState.Error(result.errorCode)
-                is Result.Success -> ListUiState.Success(result.data)
-            }
+            getAllReceipts()
         }
     }
 
@@ -40,12 +36,35 @@ class ListViewModel(
     }
 
     private fun updateList(previousState: ListUiState, removedReceipt: Receipt): List<Receipt> {
+        val previousList = obtainListFromState(previousState)
+        return previousList.toMutableList().minus(removedReceipt)
+    }
+
+    fun updateReceipts() {
+        viewModelScope.launch {
+            _uiState.update { previousState ->
+                val previousList = obtainListFromState(previousState)
+                ListUiState.IsRefreshing(previousList)
+            }
+            getAllReceipts()
+        }
+    }
+
+    private suspend fun getAllReceipts() {
+        val result = clientReceiptRepository.getAllReceipts()
+        _uiState.value = when (result) {
+            is Result.Error -> ListUiState.Error(result.errorCode)
+            is Result.Success -> ListUiState.Success(result.data)
+        }
+    }
+
+    private fun obtainListFromState(previousState: ListUiState): List<Receipt> {
         val previousList = when (previousState) {
             is ListUiState.Success -> previousState.receiptList
             is ListUiState.UpdateSuccessful -> previousState.updatedList
             else -> emptyList()
         }
-        return previousList.toMutableList().minus(removedReceipt)
+        return previousList
     }
 
 }
