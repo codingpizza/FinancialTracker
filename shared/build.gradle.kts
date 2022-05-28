@@ -100,6 +100,7 @@ sqldelight {
         packageName = "com.codingpizza.financialtracker.db"
         sourceFolders = listOf("sqldelight")
         dialect = "mysql"
+        deriveSchemaFromMigrations = true
     }
 }
 

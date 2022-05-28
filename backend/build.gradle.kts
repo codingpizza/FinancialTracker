@@ -3,18 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("kotlin-platform-jvm")
     application
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     kotlin("plugin.serialization")
-    id("com.squareup.sqldelight")
-
-}
-
-sqldelight {
-    database("FinancialTrackerDatabase") {
-        packageName = "com.codingpizza.financialtracker.db"
-        sourceFolders = listOf("sqldelight")
-        dialect = "mysql"
-    }
 }
 
 dependencies {
@@ -42,8 +32,6 @@ dependencies {
     implementation("com.h2database:h2:2.1.210")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.0.3")
     implementation("mysql:mysql-connector-java:8.0.28")
-    implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.4.4")
-
 
 
     implementation(project(":shared"))

@@ -10,8 +10,10 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.application.*
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.slf4j.Logger
+import java.io.File
 import java.sql.SQLException
 
 private const val DB_NAME = "financialtracker"
@@ -19,10 +21,21 @@ private const val DB_USER = "ktor"
 private const val DB_PASSWORD = "ktor"
 
 fun backendModule(): Module = module {
-    single { provideHikariDatasourceMariadb() }
-    single { provideSqlDelightDriver(hikariDataSource = get()) }
+//    single(qualifier = named("prod")) { provideHikariDatasourceMariadb() }
+    single(qualifier = named("test")) { provideHikariDataSourceH2() }
+    single { provideSqlDelightDriver(hikariDataSource = get(named("test"))) }
     single { provideSqlDelightDatabase(driver = get()) }
     single<ReceiptLocalDataSource> { CacheReceiptDataSource(database = get()) }
+}
+
+fun provideHikariDataSourceH2() : HikariDataSource {
+    val config = HikariConfig()
+    config.driverClassName = "org.h2.Driver"
+    config.jdbcUrl = "jdbc:h2:mem:;DATABASE_TO_UPPER=false;MODE=PostgreSQL"
+    config.maximumPoolSize = 2
+    config.isAutoCommit = true
+    config.validate()
+    return HikariDataSource(config)
 }
 
 private fun provideSqlDelightDriver(hikariDataSource: HikariDataSource): SqlDriver {
@@ -32,7 +45,7 @@ private fun provideSqlDelightDriver(hikariDataSource: HikariDataSource): SqlDriv
 }
 
 private fun provideSqlDelightDatabase(driver: SqlDriver): FinancialTrackerDatabase {
-    driver.migrate(FinancialTrackerDatabase.Schema)
+//    driver.migrate(FinancialTrackerDatabase.Schema) TODO not works with H2
     return FinancialTrackerDatabase(driver)
 }
 
