@@ -33,7 +33,7 @@ kotlin {
     val sqlDelightVersion = "1.5.2"
     val slf4jVersion = "1.7.30"
     val kotlinxSerialization = "1.2.1"
-    val koinVersion = "3.1.2"
+    val koinVersion = "3.2.0"
 
     sourceSets {
         val commonMain by getting {
@@ -105,10 +105,10 @@ sqldelight {
 }
 
 android {
-    compileSdkVersion(31)
+    compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdkVersion(23)
-        targetSdkVersion(31)
+        minSdk = 23
+        targetSdk = 33
     }
 }
